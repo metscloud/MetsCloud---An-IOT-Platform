@@ -1,0 +1,17 @@
+<table class="table table-dark">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Mail ID</th>
+    </tr>
+  </thead>
+  <tbody>
+      {{#each subscribe}}
+    <tr>
+      <th scope="row"></th>
+      <td>{{this.email}}</td>
+    </tr>
+    {{/each}}
+    
+  </tbody>
+</table>

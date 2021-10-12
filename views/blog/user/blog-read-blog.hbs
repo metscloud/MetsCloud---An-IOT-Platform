@@ -1,0 +1,49 @@
+<h3><i><center>{{blog.heading}}</center></i></h3>
+<p><center><i>{{blog.blog}}</i></center></p>
+<br>
+<br>
+<h2>Comments</h2>
+{{#each blog.comments}}
+<p><i>By:<b>{{this.email}}</b></i></p>
+<p><i>{{this.message}}</i></p>
+{{/each}}
+
+
+ <form method="POST" action="/blog/submit-comment/{{blog._id}}">
+       <div class="form-group">
+    <label for="exampleFormControlInput1">Email address</label>
+    <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com" name="email">
+  </div>
+  <br><br>
+     <div class="form-group">
+    <label for="exampleFormControlTextarea1">Comment</label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="comment"></textarea>
+  </div>
+   <button type="submit" class="btn btn-primary">Submit</button>
+ </form>
+ <br>
+ <br>
+   <a href="/blog/like-blog/{{blog._id}}" class="btn btn-secondary">likes : {{blog.likes}}</a>
+ <h2>Recomendations</h2>
+ <section>
+        
+        <div class="container mt-5">
+            <div class="row">
+                {{#each catBlogs}}
+                <div class="col-md-3">
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{this.heading}}</h5>
+                            <p class="card-text">{{this.blog}}</p>
+                             <p><i>views:{{this.clicks}}</i></p>
+                               <a href="/blog/like-blog/{{this._id}}" class="btn btn-secondary">likes : {{this.likes}}</a>
+                             <a href="/blog/read-blog/{{this._id}}" class="btn btn-primary">Read more</a>
+                        </div>
+                    </div>
+                </div>
+                 {{/each}}
+            </div>
+        </div>
+        </div>
+    </section>
+ 

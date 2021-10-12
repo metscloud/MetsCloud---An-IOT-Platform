@@ -1,0 +1,49 @@
+
+<br>
+<br>
+<h1><center><i>ADD BLOGS</i></center></h1>
+<form method="POST"  action="/admin/add-blog"> 
+  <div class="form-group">
+    <label for="exampleInputPassword1">HEADING</label>
+    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"  name="heading">
+  </div>
+  <br><br>
+  <div class="form-group">
+    <label for="exampleInputPassword1">BLOG</label>
+    <input type="text" class="form-control" id="exampleInputPassword1" name="blog">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">category</label>
+    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"  name="category">
+  </div>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Heading</th>
+      <th scope="col">Blog</th>
+      <th scope="col">Clicks</th>
+       <th scope="col">Comments</th>
+        <th scope="col">Likes</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each blogs}}
+    <tr>
+      <th scope="row"></th>
+      <td>{{this.heading}}</td>
+      <td>{{this.blog}}</td>
+       <td><b>{{this.clicks}}</b></td>
+      <td><b>{{this.comments.length}}</b></td>
+      <td><b>{{this.likes}}</b></td>
+      <td><center><a href="/admin/edit-blog/{{this._id}}" class="btn btn-primary">Edit</a> <br><br><a href="/admin/delete-blog/{{this._id}}" class="btn btn-danger" onclick="return confirm('Are you want to delete the BLOG :: {{this.heading}}')" >Delete</a></center></td>
+    
+    </tr>
+    {{/each}}
+  </tbody>
+</table>

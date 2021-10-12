@@ -1,0 +1,53 @@
+<br>
+<br>
+<h1><center><i>EDIT BLOGS</i></center></h1>
+<form method="POST"  action="/admin/update-blog/{{blogs._id}}"> 
+  <div class="form-group">
+  
+    <label for="exampleInputPassword1">HEADING</label>
+    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="{{blogs.heading}}" name="heading">
+  </div>
+  <br><br>
+  <div class="form-group">
+    <label for="exampleInputPassword1">BLOG</label>
+    <input type="text" class="form-control" id="exampleInputPassword1" value="{{blogs.blog}}" name="blog">
+  </div>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<br><br>
+<h2><i><b>Comments</b></i></h2>
+<table class="table table-striped">
+  <thead>
+    <tr> 
+      <th scope="col">#</th>
+      <th scope="col">Email</th>
+      <th scope="col">Message</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    {{#each blogs.comments}}
+    <tr>
+      <th scope="row"></th>
+ 
+            <td>
+       <form method="POST" action="/admin/delete-comment/{{blogid}} ">
+
+  <div class="form-group">
+    <label for="exampleInputEmail1"></label>
+    <input type="email" class="form-control" id="myInput"readonly aria-describedby="emailHelp" placeholder="Enter email" value="{{this.email}}" name="email">
+  </div>
+  <button type="submit" class="btn btn-danger">delete</button>
+</form>
+
+      </td>
+      <td>{{this.message}}</td>
+ 
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+         <center><a href="/admin/edit-comments/{{blogs._id}}" class="btn btn-primary">Edit</a></center>
+         <br>
+       

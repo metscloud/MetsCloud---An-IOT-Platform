@@ -1,0 +1,31 @@
+<h1><center>KEY_DETAILS</center></h1>
+
+<h3>Generate key</h3>
+<form class="form-inline" action="/admin/generatekey" method="POST">
+  <div class="form-group">
+    <label for="formGroupExampleInput">Number of keys</label>
+    <input type="text" class="form-control" id="formGroupExampleInput"  name="number">
+  </div>
+  <br>
+  <button type="submit" class="btn btn-primary mb-2">Generate</button>
+</form>
+{{!-- ______________________________________________ --}}
+
+<table class="table table-dark">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Key</th>
+      <th scope="col">Default Topic</th>
+    </tr>
+  </thead>
+  <tbody>
+      {{#each allKeys}}
+    <tr>
+      <th scope="row">#</th>
+      <td>{{this.key}}</td>
+      <td>{{this.defaultTopic}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
