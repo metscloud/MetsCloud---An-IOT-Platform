@@ -4,12 +4,13 @@ var router = express.Router();
 var userHelpers=require('../helpers/user-helpers')
 var subscribe=require('../mqtt-clients/subscribe')
 var publish=require('../mqtt-clients/publish')
-var sensorData=require('../data/sensor-data')
+var sensorData=require('../static-data/sensorData-uart')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-   let test=sensorData.temperature().LOCAL.akkkk[4].aa
-   console.log(test);
+   let test=sensorData.temperature()
+   let a=sensorData.humidity()
+   console.log(test,a);
   res.render('index',{admin:false});
 
 });
