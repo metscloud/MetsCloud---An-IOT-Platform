@@ -4,13 +4,15 @@ var router = express.Router();
 var userHelpers=require('../helpers/user-helpers')
 var subscribe=require('../mqtt-clients/subscribe')
 var publish=require('../mqtt-clients/publish')
-var sensorData=require('../static-data/sensorData-uart')
+var sensorDataUart=require('../static-data/sensorData-uart')
+var sensorDataProgrammingMode=require('../static-data/sensorData-programmingMode')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-   let test=sensorData.temperature()
-   let a=sensorData.humidity()
-   console.log(test,a);
+   let test=sensorDataUart.temperature()
+   let a=sensorDataUart.humidity()
+   let v=sensorDataProgrammingMode.MO41().key
+   console.log(test,a,v);
   res.render('index',{admin:false});
 
 });
