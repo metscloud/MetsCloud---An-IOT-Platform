@@ -10,7 +10,9 @@ module.exports={
     USER_COLLECTION:'user',
     CART_COLLECTION:'cart',
     ADMIN_COLLECTION:'admin',
-    ORDER_COLLECTION:'orders'
+    ORDER_COLLECTION:'orders',
+    UART_SUBSCRIPTIONS:'uartSubscribtions',
+    TEST:'test'
     // USER_CREADATIONALS:'userCreadationals'
 
 

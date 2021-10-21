@@ -2,7 +2,44 @@
 <br>
 <h1><center> ACCOUNT </center></h1>
 <h4><i><center>USER: {{data.email}}</center></i></h4>
-<center><a href="/connect/{{data.dtopic}}" class="btn btn-success">Connect to Server</a></center>
+
+     {{#if firstConnect}}
+    {{>empty }}
+    {{else}}
+    {{>firstConnectButton}}
+    {{/if}}
+
+<div class="col">
+    
+  {{!-- uart --}}
+  {{!-- <li>
+  <div class="dropdown show">
+  <a class="btn btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+Uart Mode
+  </a>
+
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+    <a class="dropdown-item" href="">Temperature</a>
+    <a class="dropdown-item" href="">Humidity</a>
+    <a class="dropdown-item" href="">Power</a>
+    <a class="dropdown-item" href="">Status</a>
+    <a class="dropdown-item" href="">Data</a>
+    <a class="dropdown-item" href="">Time</a>
+    <a class="dropdown-item" href="">String</a>
+    <a class="dropdown-item" href="">Location</a>
+    <a class="dropdown-item" href="">Pressure</a>
+    
+  </div>
+</div>
+</li> --}}
+{{!-- uart end --}}
+<a href="/uart" class="btn btn-danger">UART Mode</a>
+<br><br>
+<a href="/connect/{{data.dtopic}}" class="btn btn-primary">Programming Mode</a>
+
+
+</div>
+
 <div class="col-8 offset-2">
     <div class="card">
         <div class="body-card">

@@ -4,7 +4,8 @@ var objectId=require('mongodb').ObjectID
 const bcrypt=require('bcrypt')
 var keygen = require("keygenerator");
 var random=require('random')
-const { response } = require('express')
+const { response } = require('express');
+const { number } = require('keygenerator/lib/keygen');
 module.exports={
 
 
@@ -22,7 +23,8 @@ module.exports={
                 ph:userData.ph,
                 primary_key:userData.key,
                 secondary_key:secKey,
-                defaultTopic:moveDefaultTopic.defaultTopic
+                defaultTopic:moveDefaultTopic.defaultTopic,
+                firstConnect:false
  
             }
            obj.password=await bcrypt.hash(obj.password,10)
@@ -60,6 +62,7 @@ module.exports={
             let response={}
             console.log('comparing e mail  with the database e mail....');
             let user=await db.get().collection(collection.USER_CREADATIONALS).findOne({email:userData.Email})
+            
             if(user){
                 console.log('decrypting the password....');
                 console.log('comparing with database password.....');
@@ -89,7 +92,60 @@ module.exports={
             resolve(secondaryKey.secondary_key)
         })
 
+    },
+    uartAndProgrammingModeStore:(userId,data)=>{
+        return new Promise(async(resolve,reject)=>{
+            let user=await db.get().collection(collection.UART_SUBSCRIPTIONS).findOne({userID:userId})
+            if(user)
+            {
+                let obj={
+                    parameter:data.parameter,
+                    nickname:data.nickname
+                }
+                db.get().collection(collection.UART_SUBSCRIPTIONS).updateOne({ userID: userId },
+                {
+                    $push: { uartMode: obj }
+                }
+            ).then((response)=>{
+                resolve(response)
+            })
+            }
+            else
+            {
+            let obj=
+            {
+                userID:userId,
+                uartMode:[
+                    data
+                ]
+             
+
+            }
+            await db.get().collection(collection.UART_SUBSCRIPTIONS).insertOne(obj).then((response)=>{
+                resolve(response)
+            })
+        }
+        
+        })
+    },
+    getAllSecKeys:()=>{
+        return new Promise(async(resolve,reject)=>{
+            let keys=await db.get().collection(collection.USER_CREADATIONALS).find({}).project({_id:0,email:0,password:0,defaultTopic:0,firstConnect:0, primary_key:0,ph:0,}).toArray()
+            let finalKeys=[]
+            let length=keys.length
+            for(let i=0; i<=length-1;i++)
+            {
+                
+                let temp=keys[i].secondary_key
+                finalKeys.push(temp)
+                 
+            }
+            console.log('####### TOPICS ARE #######');
+            console.log(finalKeys);
+            resolve(finalKeys)
+        })
+
     }
- 
+
 
 }

@@ -1,0 +1,23 @@
+<form action="/uart-submit" method="POST">
+
+  <div class="form-group">
+    <label for="exampleFormControlSelect1">Select Parameter</label>
+    <select class="form-control" id="exampleFormControlSelect1" name="parameter">
+      <option>Temperature</option>
+      <option>Humidity</option>
+      <option>Power</option>
+      <option>Status</option>
+      <option>Data</option>
+      <option>Time</option>
+      <option>String</option>
+      <option>Location</option>
+      <option>Pressure</option>
+    </select>
+  </div>
+ 
+  <div class="form-group">
+    <label for="exampleFormControlTextarea1">Nick name</label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="nickname"></textarea>
+  </div>
+   <button type="submit" class="btn btn-primary">Submit</button>
+</form>

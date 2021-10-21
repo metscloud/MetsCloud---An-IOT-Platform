@@ -11,7 +11,9 @@ var adminRouter = require('./routes/admin');
 var blogRouter=require('./routes/blog')
 var storeRouter=require('./routes/store')
 var broker=require('./mqtt-broker/broker-aedes')
-var fileUpload=require('express-fileupload')
+var subscribe=require('./mqtt-clients/subscribe')
+var fileUpload=require('express-fileupload');
+const userHelpers = require('./helpers/user-helpers');
 
 var app = express();
 
@@ -33,6 +35,8 @@ db.connect((err)=>{
 })
 
 broker.startBroker()
+subscribe.lifeTimeSubscriber()
+
 
 app.use('/', userRouter);
 app.use('/admin', adminRouter)
