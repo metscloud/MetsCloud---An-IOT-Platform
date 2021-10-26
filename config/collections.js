@@ -12,7 +12,7 @@ module.exports={
     ADMIN_COLLECTION:'admin',
     ORDER_COLLECTION:'orders',
     UART_SUBSCRIPTIONS:'uartSubscribtions',
-    TEST:'test'
+    TEST:'test',
     // USER_CREADATIONALS:'userCreadationals'
 
 

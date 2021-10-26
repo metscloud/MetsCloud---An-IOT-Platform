@@ -14,9 +14,9 @@ module.exports={
             clientId: " ",
           });
           
-        client.on("connect", () => {
-            // setInterval(() => {
-                
+        client.on("connect", () => 
+        {
+ 
                 client.publish(defaultTopic, JSON.stringify(secKey));
                 console.log('Success');
                 client.end()
@@ -32,13 +32,37 @@ module.exports={
                         resolve(response)
                     })
                 })
-                //insert first connect to  db
-                
-                
-
-             
-            // }, 3000);
+       
           });
+       
+    },
+    publishCountToDevice:(userId)=>
+    {
+        return new Promise(async(resolve,reject)=>{
+            let secondaryKey=await db.get().collection(collection.USER_CREADATIONALS).findOne({_id:objectId(userId)})
+            let topic=secondaryKey.secondary_key
+            await db.get().collection(collection.UART_SUBSCRIPTIONS).findOne({userID:userId}).then((res)=>
+            {   
+                let count='uArt_3 '+res.uartMode.length
+                
+                const client = mqtt.connect("mqtt://localhost:1883", {
+                    clientId: " ",
+                  });
+                  client.on("connect", () => {
+                    
+                    client.publish(topic, JSON.stringify(count));
+                    console.log('sented to topic : '+topic+'   message : '+count);
+                    client.end()
+                  })
+               
+              })
+             
+            
+
+        })
+      
+
     }
+    
 }
 //

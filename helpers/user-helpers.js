@@ -36,6 +36,7 @@ module.exports={
         })
     },
     
+    
 
     keyValidator:(recivedKey)=>{
         return new Promise(async(resolve,reject)=>{
@@ -98,10 +99,14 @@ module.exports={
             let user=await db.get().collection(collection.UART_SUBSCRIPTIONS).findOne({userID:userId})
             if(user)
             {
+                let id=keygen.password();
                 let obj={
+                    Id:id,
                     parameter:data.parameter,
-                    nickname:data.nickname
+                    nickname:data.nickname,
+                    values:[]
                 }
+
                 db.get().collection(collection.UART_SUBSCRIPTIONS).updateOne({ userID: userId },
                 {
                     $push: { uartMode: obj }
@@ -112,11 +117,17 @@ module.exports={
             }
             else
             {
+            let id=keygen.password();
             let obj=
             {
                 userID:userId,
                 uartMode:[
-                    data
+                   {
+                    Id:id,
+                    parameter:data.parameter,
+                    nickname:data.nickname,
+                    values:[]
+                   }
                 ]
              
 
@@ -145,6 +156,25 @@ module.exports={
             resolve(finalKeys)
         })
 
+    },
+ 
+    getUartSubscribtions:(id)=>{
+        return new Promise(async(resolve,reject)=>{
+            let data=await db.get().collection(collection.UART_SUBSCRIPTIONS).findOne({userID:id})
+            resolve(data)
+        })
+
+    },
+    idSearcher:(array,id)=>{
+        for (let i=0;i<=array.length-1;i++)
+        {
+            
+            if(array[i].Id===id)
+            {
+                return i
+            }
+            
+        }
     }
 
 

@@ -21,6 +21,24 @@ const verifyLogin=(req,res,next)=>{
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+  //test
+
+//   const array = [2, 5, 9,7,34,67,43];
+
+// console.log(array);
+
+// const index = array.indexOf(67);
+// if (index > -1) {
+//   array.splice(index, 1);
+// }
+
+// // array = [2, 9]
+// // console.log(array[1]);
+// for(i=0;i<array.length-1;i++)
+// {
+//   console.log(array[i]+"----->"+array.indexOf(array[i]));
+// }
+  //--------------
   res.render('index',{admin:false});
 
 });
@@ -90,16 +108,17 @@ router.get('/login',(req,res)=>{
   
   })
   router.get('/uart',(req,res)=>{
-    console.log(req.session.user);
-    res.render('uart')
+    userHelpers.getUartSubscribtions(req.session.user._id).then((response)=>{
+    console.log(response.uartMode);
+    let data=response.uartMode
+    res.render('uart',{data})
+    })
   })
-  router.post('/uart-submit',(req,res)=>{
+  router.post('/uart-submit',async(req,res)=>{
     let urtParameter=req.body
-    console.log(req.session.user._id);
-    console.log(urtParameter);
-     userHelpers.uartAndProgrammingModeStore(req.session.user._id,urtParameter)
-    // for now only
-    // publish.publishSecondaryKeyToDevice(topic,urtParameter)
+     await userHelpers.uartAndProgrammingModeStore(req.session.user._id,urtParameter)
+     publish.publishCountToDevice(req.session.user._id)
+   
   })
 
 module.exports = router;
