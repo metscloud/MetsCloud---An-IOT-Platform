@@ -6,6 +6,31 @@ var keygen = require("keygenerator");
 var random=require('random')
 const { response } = require('express');
 const { number } = require('keygenerator/lib/keygen');
+
+
+////_________________________________ Helpers for user-helpers_________________________________
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function idSearcher (array,id){
+    for (let i=0;i<=array.length-1;i++)
+    {
+        
+        if(array[i].Id===id)
+        {
+            console.log('ID FOUND');
+            return i
+        }
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
 module.exports={
 
 
@@ -165,17 +190,40 @@ module.exports={
         })
 
     },
-    idSearcher:(array,id)=>{
-        for (let i=0;i<=array.length-1;i++)
-        {
-            
-            if(array[i].Id===id)
-            {
-                return i
+    deleteUartParameter:(userId,deleteId)=>{
+        return new Promise(async(resolve,reject)=>{
+            let data=await db.get().collection(collection.UART_SUBSCRIPTIONS).findOne({userID:userId})
+            let location=idSearcher(data.uartMode,deleteId)
+            console.log(location);
+            let array=data.uartMode
+            array.splice(location,1)
+            console.log('######');
+            console.log(array);
+            await db.get().collection(collection.UART_SUBSCRIPTIONS).deleteOne({userID:userId})
+            let obj={
+                userID:data.userID,
+                uartMode:array
             }
-            
-        }
-    }
+            await db.get().collection(collection.UART_SUBSCRIPTIONS).insertOne(obj).then((res)=>{
+                console.log('DONE');
+                resolve(res)
+            })   
+             
+        })
+
+
+    },
+  
+    getValues:(userId,id)=>{
+    
+    return new Promise(async(resolve,reject)=>{
+        let data=await db.get().collection(collection.UART_SUBSCRIPTIONS).findOne({userID:userId})
+        let location=idSearcher(data.uartMode,id)
+        let array=data.uartMode
+        let newArray=array[location].values
+        resolve(newArray)
+    })
+}
 
 
 }

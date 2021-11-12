@@ -3,14 +3,69 @@ var collection= require('../config/collections')
 var objectId=require('mongodb').ObjectID
 var publish=require('../mqtt-clients/publish')
 const mqtt = require("mqtt");
-const { response } = require('express');
-var userHelpers=require('../helpers/user-helpers')
-module.exports={
+const { response } =  require('express');
+var userHelpers=require('../helpers/user-helpers');
+const { log } = require('debug');
 
-    lifeTimeSubscriber:()=>{
-     
-        
-        const client = mqtt.connect("mqtt://localhost:1883", {
+
+
+   //__________________________S U P P O R T E R S____________________________________________
+  ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// //////
+  ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// //////
+  ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// //////
+  ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// //////
+  ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// //////
+
+  function dataAdder (userId,ak)
+  {
+    return new Promise(async(resolve,reject)=>{
+        let data=await db.get().collection(collection.UART_SUBSCRIPTIONS).findOne({userID:userId})
+        let array=data.uartMode
+        // only for testing purpose
+      //  let ak=[18,34,24]
+      ak.split(',')
+      console.log(ak);
+      var arry = JSON.parse("[" + ak + "]");
+      console.log(arry);
+        //
+        dataArray=[]
+        console.log(array.length);
+        for(let i=0; i<=array.length-1;i++)
+        {
+           let temp=arry[i]
+           if (temp=='100000')
+           {
+                console.log('Empty POSITION  at '+i);
+           }
+           else
+           {
+            array[i].values.push(temp)
+           }
+        }
+        console.log('}}}}}}');
+        console.log(array); 
+        await db.get().collection(collection.UART_SUBSCRIPTIONS).deleteOne({userID:userId})
+        let obj={
+            userID:data.userID,
+            uartMode:array
+        }
+        await db.get().collection(collection.UART_SUBSCRIPTIONS).insertOne(obj).then((res)=>{
+            console.log('DONE');
+        })             
+    })
+
+}
+
+  ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// //////
+  ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// //////
+  ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// //////
+  ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// //////
+  ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// //////
+  module.exports={
+
+    lifeTimeSubscriber:()=>
+          {
+            const client = mqtt.connect("mqtt://localhost:1883", {
             clientId: " ",
             
           });
@@ -21,40 +76,49 @@ module.exports={
           client.on("message", function (topic, message) {
             console.log("TOPIC ::"+topic);
             context = message.toString();
-            console.log("MESSAGE ::"+context);
-            // return new Promise(async(resolve,reject)=>{
-            //   let obj=
-            //   {
-            //     secondaryKey:topic,
-            //     data:context
-            //   }
-             
-            //   await db.get().collection(collection.TEST).insertOne(obj).then((response)=>{
-            //     console.log("######## D O N E ######");
-            //   })
-            // })
+            console.log("MESSAGE ::"+context)
 
-
-            // need to work with the structure
-               return new Promise(async(resolve,reject)=>{
-             
-              let user=await db.get().collection(collection.USER_CREADATIONALS).findOne({secondary_key:topic})
-              let userId=user._id.toString()
-              let data=await db.get().collection(collection.UART_SUBSCRIPTIONS).updateOne({userID:userId},
-                {
-                  $push: {"uartMode.$[].values": context  }
-                  
-                 
-              }
+          //  Process after recieving a message 
+  
+            if(context==='krs')
+            {
+              console.log('Conformation recieved');
             
-                )
-           
-              
+              return new Promise(async(resolve,reject)=>{
+             
+                db.get().collection(collection.USER_CREADATIONALS).updateOne({"secondary_key":topic},
+                {
+                    $set:{
+                        "firstConnect":true
+                    }
+                }
+                ).then(()=>{
+                    resolve({status:true})
+                    console.log('Secondary key successfully recieved in device');
+                })
             })
+          
+            }
+            else if(context==='MODE?')
+            {
+              console.log(' Device :  mode type ?');
+
+            }
+            else
+            {
+              return new Promise(async(resolve,reject)=>{
+                let user=await db.get().collection(collection.USER_CREADATIONALS).findOne({secondary_key:topic})
+                let userId=user._id.toString()
+                dataAdder(userId,context)
+                
+              })
+
+            }
+            
+              
           });
-
-
-    }
+    },
+    
 }
 
 ////

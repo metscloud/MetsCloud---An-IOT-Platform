@@ -18,20 +18,10 @@ module.exports={
         {
  
                 client.publish(defaultTopic, JSON.stringify(secKey));
-                console.log('Success');
+                console.log('Secondary key published to device ON default Topic');
                 client.end()
                 console.log(secKey);
-                return new Promise(async(resolve,reject)=>{
-                    db.get().collection(collection.USER_CREADATIONALS).updateOne({"secondary_key":secKey},
-                    {
-                        $set:{
-                            "firstConnect":true
-                        }
-                    }
-                    ).then((response)=>{
-                        resolve(response)
-                    })
-                })
+                
        
           });
        
@@ -53,6 +43,7 @@ module.exports={
                     client.publish(topic, JSON.stringify(count));
                     console.log('sented to topic : '+topic+'   message : '+count);
                     client.end()
+                   resolve({status:true})
                   })
                
               })

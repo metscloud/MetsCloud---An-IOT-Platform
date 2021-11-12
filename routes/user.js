@@ -21,24 +21,6 @@ const verifyLogin=(req,res,next)=>{
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  //test
-
-//   const array = [2, 5, 9,7,34,67,43];
-
-// console.log(array);
-
-// const index = array.indexOf(67);
-// if (index > -1) {
-//   array.splice(index, 1);
-// }
-
-// // array = [2, 9]
-// // console.log(array[1]);
-// for(i=0;i<array.length-1;i++)
-// {
-//   console.log(array[i]+"----->"+array.indexOf(array[i]));
-// }
-  //--------------
   res.render('index',{admin:false});
 
 });
@@ -103,22 +85,55 @@ router.get('/login',(req,res)=>{
   router.get('/connect/:id',verifyLogin,(req,res)=>{
     userHelpers.pickSecondaryKey(req.params.id).then((secKey)=>{
       publish.publishSecondaryKeyToDevice(req.params.id,secKey)
+
       
-    })
+      })
+ 
+ 
   
   })
   router.get('/uart',(req,res)=>{
     userHelpers.getUartSubscribtions(req.session.user._id).then((response)=>{
-    console.log(response.uartMode);
-    let data=response.uartMode
-    res.render('uart',{data})
+    if(response)
+    { 
+      let data=response.uartMode
+      res.render('uart',{data})
+    }else{
+      res.render('uart')
+    }
     })
   })
   router.post('/uart-submit',async(req,res)=>{
     let urtParameter=req.body
      await userHelpers.uartAndProgrammingModeStore(req.session.user._id,urtParameter)
-     publish.publishCountToDevice(req.session.user._id)
+     publish.publishCountToDevice(req.session.user._id).then((status)=>{
+       res.redirect('/uart')
+     })
    
+  })
+  router.get('/uart-delete-parameter/:id',(req,res)=>{
+    console.log(req.params.id);
+    userHelpers.deleteUartParameter(req.session.user._id,req.params.id).then((response)=>{
+      res.redirect('/uart')
+    })
+  
+  })
+  router.get('/uart-view-parameter/:id',(req,res)=>{
+    console.log(req.params.id);
+    userHelpers.getValues(req.session.user._id,req.params.id).then((response)=>{
+    console.log(response);
+    if(response)
+    {
+      let data=response
+      let type='line'
+      res.render('view-parameter',{data,type})
+    }else{
+      res.render('view-parameter')
+    }
+  
+
+   
+    })
   })
 
 module.exports = router;

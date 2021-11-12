@@ -27,6 +27,7 @@
       
       <th scope="col">Parameter</th>
       <th scope="col">Nick Name</th>
+      <th scope="col">Option</th>
     </tr>
   </thead>
   <tbody>
@@ -35,6 +36,9 @@
      
       <td>{{this.parameter}}</td>
       <td>{{this.nickname}}</td>
+      <td><a href="/uart-delete-parameter/{{this.Id}}" class="btn btn-danger" onclick="return confirm('Are you want to delete  {{this.nickname}}')">Delete</a></td>
+    <td><a href="/uart-view-parameter/{{this.Id}}" class="btn btn-success" >View</a></td>
+   
     </tr>
     {{/each}}
   </tbody>
