@@ -33,7 +33,7 @@ const { log } = require('debug');
         for(let i=0; i<=array.length-1;i++)
         {
            let temp=arry[i]
-           if (temp=='100000')
+           if (temp=='-777.777')
            {
                 console.log('Empty POSITION  at '+i);
            }
@@ -61,64 +61,96 @@ const { log } = require('debug');
   ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// //////
   ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// //////
   ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// //////
-  module.exports={
+  module.exports=
+  {
 
     lifeTimeSubscriber:()=>
           {
+           
             const client = mqtt.connect("mqtt://localhost:1883", {
             clientId: " ",
             
           });
+
           client.on("connect", async function () {
              let topic= await userHelpers.getAllSecKeys()
             client.subscribe(topic);
           });
+
           client.on("message", function (topic, message) {
             console.log("TOPIC ::"+topic);
             context = message.toString();
             console.log("MESSAGE ::"+context)
 
-          //  Process after recieving a message 
-  
-            if(context==='krs')
-            {
-              console.log('Conformation recieved');
-            
-              return new Promise(async(resolve,reject)=>{
-             
-                db.get().collection(collection.USER_CREADATIONALS).updateOne({"secondary_key":topic},
-                {
-                    $set:{
-                        "firstConnect":true
-                    }
-                }
-                ).then(()=>{
-                    resolve({status:true})
-                    console.log('Secondary key successfully recieved in device');
-                })
-            })
-          
-            }
-            else if(context==='MODE?')
-            {
-              console.log(' Device :  mode type ?');
+ ////////////////////////////  //  _________Process after recieving a message________ //////////////////////////////////////////
 
-            }
-            else
+          if(context==='krs')
+          {
+            console.log('Conformation recieved ');
+          
+            return new Promise(async(resolve,reject)=>
             {
+           
+              db.get().collection(collection.USER_CREADATIONALS).updateOne({"secondary_key":topic},
+              {
+                  $set:{
+                      "firstConnect":true
+                  }
+              }
+              ).then(()=>{
+                  resolve({status:true})
+                  console.log('Secondary key successfully recieved in device...');
+              })
+          })
+        
+          }
+
+          else if(context==='MODE?')
+          {
+            return new Promise(async(resolve,reject)=>
+            {
+              let user=await db.get().collection(collection.USER_CREADATIONALS).findOne({"secondary_key":topic})
+              let mode=user.liveMode
+              console.log('Mode :'+mode);
+              console.log('senting mode....');
+              client.publish(topic, JSON.stringify(mode));
+              console.log('sented to topic : '+topic+'   message : '+mode);
+            })
+          }
+
+          else
+          {
+             console.log('Data recieved');
               return new Promise(async(resolve,reject)=>{
                 let user=await db.get().collection(collection.USER_CREADATIONALS).findOne({secondary_key:topic})
                 let userId=user._id.toString()
-                dataAdder(userId,context)
+                if(context==='"pro"'|| context==='"uart"')
+                {
+                  console.log('Recieved message published from MODE?');
+                  console.log('skipping....');
+                }
+                else
+                {
+                  dataAdder(userId,context)
+                }
+              
                 
               })
 
             }
-            
-              
+
+  ///////////////  ////////////// ///////////////////////////  ///////////////  ////////////// ///////////////////////////  ///////////////  ////////////// ///////////////////////////
           });
+          
     },
+  
     
+
+
+
+
+
+
 }
 
 ////

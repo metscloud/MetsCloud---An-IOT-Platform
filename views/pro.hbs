@@ -1,0 +1,136 @@
+
+<center>
+<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYOuxzIr9wiqXCmVGeyUwzY9_6HLCr_To-4A&usqp=CAU" width="500px" height="500px">
+</center>
+<form action="/pro-submit" method="POST">
+{{!-- option 1 --}}
+  <div class="form-group">
+    <label for="exampleFormControlSelect1">Select Parameter</label>
+    <select class="form-control" id="exampleFormControlSelect1" name="parameter1">
+         {{#each option1}}
+      <option>{{this.name}} </option>
+   
+        
+        {{/each}}
+      {{!-- <option>LM35</option>
+      <option>PT100,1000</option>
+      <option>IR Rx LED</option>
+      <option>LDR</option>
+      <option>Potentiometer</option>
+      <option>Force Sensor</option>
+      <option>Flow Sensor</option>
+      <option>Hall effect sensor[A3144]</option>
+      <option>Gas sensor[mq2-mq4]</option>
+      <option>Air Quality senor[mq135]</option>
+      <option>Co2 [mq9]</option>
+      <option>Moisture Detector[M041]</option>
+      <option>Current sensor</option>
+      <option>Volatge sensor</option> --}}
+    </select>
+  </div>
+{{!-- option 2 --}}
+  <div class="form-group">
+    <label for="exampleFormControlSelect1">Select Parameter</label>
+    <select class="form-control" id="exampleFormControlSelect1" name="parameter2">
+        {{#each option2}}
+        <option>{{this.name}}</option>
+        {{/each}}
+      {{!-- <option>DS18B20</option>
+      <option>DHT11</option>
+      <option>DHT22</option>
+      <option>HR201</option>
+      <option>PIR</option>
+      <option>IR</option>
+      <option>HS-SR04</option>
+      <option>US-100</option>
+      <option>Button/Switch</option>
+      <option>Rotery Encoder</option>
+       <option>Buzzer</option>
+      <option>relay</option>
+      <option>led</option>
+      <option>RGB LED</option>
+      <option>LED</option> --}}
+     
+    </select>
+  </div>
+
+{{!-- optiion 3 --}}
+  <div class="form-group">
+    <label for="exampleFormControlSelect1">Select Parameter</label>
+    <select class="form-control" id="exampleFormControlSelect1" name="parameter3">
+          {{#each option3}}
+        <option>{{this.name}}</option>
+        {{/each}}
+      {{!-- <option>DS18B20</option>
+      <option>DHT11</option>
+      <option>DHT22</option>
+      <option>HR201</option>
+       <option>PIR</option>
+      <option>IR</option>
+      <option>HS-SR04</option>
+      <option>US-100</option>
+      <option>Button/Switch</option>
+      <option>Rotery Encoder</option>
+      <option>Buzzer</option>
+      <option>relay</option>
+      <option>led</option>
+      <option>RGB LED</option>
+      <option>LED</option> --}}
+    </select>
+  </div>
+
+{{!-- option 4 --}}
+  <div class="form-group">
+    <label for="exampleFormControlSelect1">Select Parameter</label>
+    <select class="form-control" id="exampleFormControlSelect1" name="parameter4">
+          {{#each option4}}
+        <option>{{this.name}}</option>
+        {{/each}}
+      {{!-- <option>DS18B20</option>
+      <option>DHT11</option>
+      <option>DHT22</option>
+      <option>HR201</option>
+     <option>NEO-6M(gsm)</option>
+      <option>PIR</option>
+      <option>IR</option>
+      <option>HS-SR04</option>
+      <option>US-100</option>
+      <option>Button/Switch</option>
+      <option>Rotery Encoder</option>
+       <option>Buzzer</option>
+      <option>relay</option>
+      <option>led</option>
+      <option>RGB LED</option>
+      <option>LED</option> --}}
+    </select>
+  </div>
+
+{{!-- option 5 --}}
+  <div class="form-group">
+    <label for="exampleFormControlSelect1">Select Parameter</label>
+    <select class="form-control" id="exampleFormControlSelect1" name="parameter5">
+          {{#each option5}}
+        <option>{{this.name}}</option>
+ 
+        {{/each}}
+   {{!-- <option>DS18B20</option>
+      <option>DHT11</option>
+      <option>DHT22</option>
+      <option>HR201</option>
+      <option>NEO-6M(gsm)</option>
+       <option>PIR</option>
+      <option>IR</option>
+      <option>HS-SR04</option>
+      <option>US-100</option>
+      <option>Button/Switch</option>
+      <option>Rotery Encoder</option>
+       <option>Buzzer</option>
+      <option>relay</option>
+      <option>led</option>
+      <option>RGB LED</option>
+      <option>LED</option> --}}
+    </select>
+  </div>
+  {{!--  --}}
+   <button type="submit" class="btn btn-primary">Submit</button>
+</form>

@@ -53,6 +53,21 @@ module.exports={
         })
       
 
+    },
+    publishPinValuesToDevice:(topic,data)=>{
+        return new Promise(async(resolve,reject)=>{
+            const client = mqtt.connect("mqtt://localhost:1883", {
+                    clientId: " ",
+                  });
+                  client.on("connect", () => {
+                    
+                    client.publish(topic, JSON.stringify(data));
+                    console.log('sented to topic : '+topic+'   message : '+data);
+                    client.end()
+                   resolve({status:true})
+                  })
+
+        })
     }
     
 }

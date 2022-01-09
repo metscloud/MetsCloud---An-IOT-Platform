@@ -1,0 +1,30 @@
+<form method="POST"  action="/admin/edit-sensorddata/{{dataToEdit._id}}"> 
+  <div class="form-group">
+    <label for="exampleInputPassword1">Name</label>
+    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="{{dataToEdit.name}}" name="name">
+  </div>
+  <br><br>
+   <div class="form-group">
+    <label for="exampleInputPassword1">Key</label>
+    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="{{dataToEdit.key}}" name="key">
+  </div>
+  <br><br>
+   <div class="form-group">
+    <label for="exampleInputPassword1">Min value</label>
+    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="{{dataToEdit.minValue}}" name="minValue">
+  </div>
+  <br><br>
+   <div class="form-group">
+    <label for="exampleInputPassword1">Max Value</label>
+    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="{{dataToEdit.maxValue}}" name="maxValue">
+  </div>
+  <br><br>
+   <div class="form-group">
+    <label for="exampleInputPassword1">Pin</label>
+    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="{{dataToEdit.pinNumber}}" name="pinNumber">
+  </div>
+  <br><br>
+ 
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>

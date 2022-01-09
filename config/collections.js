@@ -13,6 +13,7 @@ module.exports={
     ORDER_COLLECTION:'orders',
     UART_SUBSCRIPTIONS:'uartSubscribtions',
     TEST:'test',
+    SENSORS:'sensors',
     // USER_CREADATIONALS:'userCreadationals'
 
 

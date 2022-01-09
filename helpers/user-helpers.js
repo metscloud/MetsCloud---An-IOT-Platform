@@ -6,6 +6,7 @@ var keygen = require("keygenerator");
 var random=require('random')
 const { response } = require('express');
 const { number } = require('keygenerator/lib/keygen');
+var sensorDataProgrammingMode=require('../static-data/sensorData-programmingMode')
 
 
 ////_________________________________ Helpers for user-helpers_________________________________
@@ -49,7 +50,8 @@ module.exports={
                 primary_key:userData.key,
                 secondary_key:secKey,
                 defaultTopic:moveDefaultTopic.defaultTopic,
-                firstConnect:false
+                firstConnect:false,
+                liveMode:'uart'
  
             }
            obj.password=await bcrypt.hash(obj.password,10)
@@ -222,6 +224,48 @@ module.exports={
         let array=data.uartMode
         let newArray=array[location].values
         resolve(newArray)
+    })
+},
+
+liveModeChanger:(id,mode)=>{
+
+            return new Promise(async(resolve,reject)=>{
+            let user=await db.get().collection(collection.USER_CREADATIONALS).updateOne({_id:objectId(id)}, {
+                $set:{
+                    "liveMode":mode
+                }
+            }).then((response)=>{
+             
+                resolve({status:true})
+
+            })
+          
+       
+    })
+},
+
+settingPinToOptions:(pin)=>{
+    return new Promise(async(resolve,reject)=>{
+          await db.get().collection(collection.SENSORS).find({pinNumber:pin}).toArray().then((pinData)=>{
+              resolve(pinData)
+
+            })
+    })
+},
+keyTaker:(Name)=>{
+
+        return new Promise(async(resolve,reject)=>{
+            await db.get().collection(collection.SENSORS).findOne({name:Name}).then((response)=>{
+              resolve(response)
+            })
+        })
+
+},
+secondaryKeyTaker:(id)=>{
+    return new Promise(async(resolve,reject)=>{
+        await db.get().collection(collection.USER_CREADATIONALS).findOne({_id:objectId(id)}).then((response)=>{
+            resolve(response.secondary_key)
+        })
     })
 }
 

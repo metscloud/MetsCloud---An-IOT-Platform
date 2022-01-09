@@ -224,8 +224,47 @@ router.get('/sales',(req,res)=>{
     var type=120
     res.render('admin/sales',{admin:true,type})
 })
+router.get('/add-sensors',async(req,res)=>{
+  await adminHelpers.getSensors().then((sensors)=>{
+    res.render('add-sensors',{admin:true,sensors})
+  
+  })
+
+  
+})
+router.post('/add-new-sensors',(req,res)=>{
+  console.log(req.body);
+  adminHelpers.addSensors(req.body).then((response)=>{
+    console.log(response);
+    res.redirect('/admin/add-sensors')
+  })
+ 
+  
+})
+router.get('/delete-sensor/:id',(req,res)=>{
+  let id=req.params.id
+  adminHelpers.deleteSensor(id).then((response)=>{
+    res.redirect('/admin/add-sensors')
+  })
+})
+
+router.get('/edit-sensor/:id',(req,res)=>{
+adminHelpers.sensorDataToEdit(req.params.id).then((data)=>{
+  console.log('oooooo');
+  let dataToEdit=data[0]
+  res.render('edit-sensor',{admin:true,dataToEdit})
+})
+})
+router.post('/edit-sensorddata/:id',(req,res)=>{
+  console.log(req.params.id);
+  console.log(req.body);
+  adminHelpers.editSensorDetails(req.params.id,req.body).then((res)=>{
+    console.log('DONE');
+  })
+
+})
 
 module.exports = router;
 
 
-module.exports = router;
+

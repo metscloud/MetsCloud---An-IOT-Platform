@@ -21,6 +21,7 @@ const verifyLogin=(req,res,next)=>{
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+
   res.render('index',{admin:false});
 
 });
@@ -69,11 +70,11 @@ router.get('/login',(req,res)=>{
         let data={
           email:response.user.email,
           dtopic:response.user.defaultTopic,
+          liveMode:response.user.liveMode,
           
 
         }
-        console.log("#########");
-        console.log(firstConnect);
+
         
         res.render('account',{data,firstConnect})
       }else{
@@ -111,11 +112,13 @@ router.get('/login',(req,res)=>{
      })
    
   })
-  router.get('/uart-delete-parameter/:id',(req,res)=>{
+  router.get('/uart-delete-parameter/:id',async(req,res)=>{
     console.log(req.params.id);
-    userHelpers.deleteUartParameter(req.session.user._id,req.params.id).then((response)=>{
-      res.redirect('/uart')
-    })
+   await userHelpers.deleteUartParameter(req.session.user._id,req.params.id)
+   publish.publishCountToDevice(req.session.user._id).then((status)=>{
+    res.redirect('/uart')
+  })
+ 
   
   })
   router.get('/uart-view-parameter/:id',(req,res)=>{
@@ -130,10 +133,122 @@ router.get('/login',(req,res)=>{
     }else{
       res.render('view-parameter')
     }
-  
 
-   
     })
   })
+  router.get('/selected-uart',(req,res)=>{
+    console.log(req.session.user._id);
+    userHelpers.liveModeChanger(req.session.user._id,'uart').then((res)=>{
+     console.log(res);
+     if(res.status)
+     {
+      console.log('Successfully updated the live mode to UART MODE');
+     }else{
+      console.log('failed to update the live mode');
+     }
+    })
+  })
+  router.get('/selected-programming',(req,res)=>{
+    userHelpers.liveModeChanger(req.session.user._id,'pro').then((res)=>{
+      console.log(res);
+      if(res.status)
+      {
+       console.log('Successfully updated the live mode to PROGRAMMING MODE');
+      }else{
+       console.log('failed to update the live mode');
+      }
+     })
+
+  })
+  router.get('/programmingmode',async(req,res)=>{
+    let option1=await userHelpers.settingPinToOptions('1')
+    let option2=await userHelpers.settingPinToOptions('2')
+    let option3=await userHelpers.settingPinToOptions('3')
+    let option4=await userHelpers.settingPinToOptions('4')
+    let option5=await userHelpers.settingPinToOptions('5')
+    res.render('pro',{option1,option2,option3,option4,option5})
+  })
+  router.post('/pro-submit',async(req,res)=>
+  {
+    let data=req.body
+     arrayData=[]
+
+    if(data.parameter1)
+    {
+      await userHelpers.keyTaker(data.parameter1).then((response)=>{
+      console.log(response);
+      arrayData.push(response.key)
+    })
+    }
+    else
+    {
+      let pin='0'
+      arrayData.push(pin)
+    }
+    
+      if(data.parameter2)
+      {
+        await userHelpers.keyTaker(data.parameter2).then((response)=>{
+        console.log(response);
+        arrayData.push(response.key)
+      })
+    
+      }
+      else
+      {
+        let pin='0'
+        arrayData.push(pin)
+      }
+    if(data.parameter3)
+    {
+      await userHelpers.keyTaker(data.parameter3).then((response)=>{
+      console.log(response);
+      arrayData.push(response.key)
+  })
+  
+    }
+    else
+    {
+      let pin='0'
+      arrayData.push(pin)
+    }
+      if(data.parameter4)
+      {
+        await userHelpers.keyTaker(data.parameter4).then((response)=>{
+        console.log(response);
+        arrayData.push(response.key)
+ })
+      }
+      else
+      {
+        let pin='0'
+        arrayData.push(pin)
+      }
+
+    if(data.parameter5)
+    {
+      await userHelpers.keyTaker(data.parameter5).then((response)=>{
+      console.log(response);
+      arrayData.push(response.key)
+    })
+  
+    }
+    else
+    {
+      let pin='0'
+      arrayData.push(pin)
+    }
+    userHelpers.secondaryKeyTaker(req.session.user._id).then((secKey)=>{
+      console.log(secKey);
+      publish.publishPinValuesToDevice(secKey,arrayData).then((status)=>{
+        res.render('pro-spec')
+      })
+    })
+    })
+  
+    
+
+
+  
 
 module.exports = router;

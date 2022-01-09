@@ -44,6 +44,62 @@ keyViewer:()=>{
             resolve(allKeys)
         })
     })
-}
+},
+addSensors:(data)=>{
+    return new Promise(async(resolve,reject)=>{
+        let obj={
+            name:data.name,
+            key:data.key,
+            minValue:data.min,
+            maxValue:data.max,
+            pinNumber:data.pin,
+        }
+        await db.get().collection(collection.SENSORS).insertOne(obj).then((response)=>{
+           resolve(response)
+
+        })
+    })
+},
+getSensors:()=>{
+    return new Promise(async(resolve,reject)=>{
+        await db.get().collection(collection.SENSORS).find().toArray().then((allSensors)=>{
+            resolve(allSensors)
+          
+        })
+    })
+},
+deleteSensor:(id)=>{
+    return new Promise(async(resolve,reject)=>{
+        await db.get().collection(collection.SENSORS).deleteOne({_id:objectId(id)}).then((response)=>{
+            resolve(response)
+        })
+    })
+},
+editSensorDetails:(id,data)=>{
+
+    return new Promise((resolve,reject)=>{
+        db.get().collection(collection.SENSORS).updateOne({_id:objectId(id)},
+        {
+            $set:{
+                name:data.name,
+                key:data.key,
+                minValue:data.minValue,
+                maxValue:data.maxValue,
+                pinNumber:data.pinNumber,
+            }
+        }).then((response)=>{
+            resolve(response)
+        })
+    })
+},
+sensorDataToEdit:(id)=>{
+    return new Promise(async(resolve,reject)=>{
+        await db.get().collection(collection.SENSORS).find({_id:objectId(id)}).toArray().then((allSensors)=>{
+            resolve(allSensors)
+          
+        })
+    })
+},
+
 
 }

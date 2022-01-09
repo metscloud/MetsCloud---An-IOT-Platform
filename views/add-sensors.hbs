@@ -1,0 +1,54 @@
+<form action="/admin/add-new-sensors" method="POST">
+
+  <div class="form-group">
+    <label for="exampleFormControlTextarea1"> Name </label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="name"></textarea>
+  </div>
+   <div class="form-group">
+    <label for="exampleFormControlTextarea1"> Key </label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="key"></textarea>
+  </div>
+    <div class="form-group">
+    <label for="exampleFormControlTextarea1"> Min Value </label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="min"></textarea>
+  </div>
+    <div class="form-group">
+    <label for="exampleFormControlTextarea1"> Max Value </label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="max"></textarea>
+  </div>
+   <div class="form-group">
+    <label for="exampleFormControlTextarea1"> PIN NUMBER </label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="pin"></textarea>
+  </div>
+   
+   <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+
+<table class="table table-dark">
+  <thead>
+    <tr>
+      
+      <th scope="col">Name</th>
+      <th scope="col">key</th>
+      <th scope="col">Min value</th>
+      <th scope="col">Max value</th>
+     <th scope="col">PIN no</th>
+    </tr>
+  </thead>
+  <tbody>
+      {{#each sensors}}
+    <tr>
+     
+      <td>{{this.name}}</td>
+      <td>{{this.key}}</td>
+       <td>{{this.minValue}}</td>
+        <td>{{this.maxValue}}</td>
+        <td>{{this.pinNumber}}</td>
+      <td><a href="/admin/delete-sensor/{{this._id}}" class="btn btn-danger" onclick="return confirm('Are you want to delete  {{this.name}}')">Delete</a></td>
+    <td><a href="/admin/edit-sensor/{{this._id}}" class="btn btn-success" >Edit</a></td>
+   
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
