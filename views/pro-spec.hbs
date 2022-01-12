@@ -1,1 +1,57 @@
 <center><h3>Calculation</h3></center>
+
+
+<form method="post" action="/calculation-submit">
+
+
+    {{#if pin1}}
+  <div class="form-group">
+    <label for="exampleFormControlTextarea1">PIN 1</label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="PIN1"></textarea>
+  </div>
+  {{/if}}
+
+    {{#if pin2}}
+  <div class="form-group">
+    <label for="exampleFormControlTextarea1"><h3>PIN 2</h3><label>
+        <p>less than >=</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="Pin2GreaterOrEqualto"></textarea>
+            <p>less than <= </p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="Pin2LessOrEqualto"></textarea>
+  </div>
+  {{/if}}
+
+
+    {{#if pin3}}
+  <div class="form-group">
+    <label for="exampleFormControlTextarea1"><h3>PIN 3</h3><label>
+        <p>less than >=</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="Pin3GreaterOrEqualto"></textarea>
+            <p>less than <= </p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="Pin3LessOrEqualto"></textarea>
+  </div>
+  {{/if}}
+
+
+    {{#if pin4}}
+  <div class="form-group">
+    <label for="exampleFormControlTextarea1"><h3>PIN 4</h3><label>
+        <p>less than >=</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="Pin4GreaterOrEqualto"></textarea>
+            <p>less than <= </p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="Pin4LessOrEqualto"></textarea>
+  </div>
+  {{/if}}
+
+    {{#if pin5}}
+  <div class="form-group">
+    <label for="exampleFormControlTextarea1"><h3>PIN 5</h3><label>
+        <p>less than >=</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="Pin5GreaterOrEqualto"></textarea>
+            <p>less than <= </p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="Pin5LessOrEqualto"></textarea>
+  </div>
+  {{/if}}
+
+     <button type="submit" class="btn btn-primary">Submit</button>
+</form>

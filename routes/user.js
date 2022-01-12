@@ -172,8 +172,9 @@ router.get('/login',(req,res)=>{
   {
     let data=req.body
      arrayData=[]
+     console.log(typeof data.parameter1);
 
-    if(data.parameter1)
+    if(data.parameter1 != 'none')
     {
       await userHelpers.keyTaker(data.parameter1).then((response)=>{
       console.log(response);
@@ -186,7 +187,7 @@ router.get('/login',(req,res)=>{
       arrayData.push(pin)
     }
     
-      if(data.parameter2)
+      if(data.parameter2 != 'none')
       {
         await userHelpers.keyTaker(data.parameter2).then((response)=>{
         console.log(response);
@@ -199,7 +200,7 @@ router.get('/login',(req,res)=>{
         let pin='0'
         arrayData.push(pin)
       }
-    if(data.parameter3)
+    if(data.parameter3 != 'none')
     {
       await userHelpers.keyTaker(data.parameter3).then((response)=>{
       console.log(response);
@@ -212,7 +213,7 @@ router.get('/login',(req,res)=>{
       let pin='0'
       arrayData.push(pin)
     }
-      if(data.parameter4)
+      if(data.parameter4 != 'none')
       {
         await userHelpers.keyTaker(data.parameter4).then((response)=>{
         console.log(response);
@@ -225,7 +226,7 @@ router.get('/login',(req,res)=>{
         arrayData.push(pin)
       }
 
-    if(data.parameter5)
+    if(data.parameter5 != 'none')
     {
       await userHelpers.keyTaker(data.parameter5).then((response)=>{
       console.log(response);
@@ -240,10 +241,38 @@ router.get('/login',(req,res)=>{
     }
     userHelpers.secondaryKeyTaker(req.session.user._id).then((secKey)=>{
       console.log(secKey);
+      let pin1=false
+      let pin2=false
+      let pin3=false
+      let pin4=false
+      let pin5=false
+      if(data.parameter1!='none')
+      {
+         pin1=true
+      }
+      if(data.parameter2!='none')
+      {
+         pin2=true
+      }
+      if(data.parameter3!='none')
+      {
+         pin3=true
+      }
+      if(data.parameter4!='none')
+      {
+         pin4=true
+      }
+      if(data.parameter5!='none')
+      {
+         pin5=true
+      }
       publish.publishPinValuesToDevice(secKey,arrayData).then((status)=>{
-        res.render('pro-spec')
+        res.render('pro-spec',{pin1,pin2,pin3,pin4,pin5})
       })
     })
+    })
+    router.post('/calculation-submit',(req,res)=>{
+      console.log(req.body);
     })
   
     
