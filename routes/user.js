@@ -251,14 +251,7 @@ router.get('/login',(req,res)=>{
       let led4=false
       let pin5=false
       let led5=false
-      if(data.parameter1!='none')
-      {
-         pin1=true
-         if(data.parameter1=='pdf')
-        {
-          led1=true
-        }
-      }
+      
       if(data.parameter2!='none')
       {
          pin2=true
@@ -270,7 +263,7 @@ router.get('/login',(req,res)=>{
       if(data.parameter3!='none')
       {
          pin3=true
-         if(data.parameter3=='pdf')
+         if(data.parameter3=='lm35')
         {
           led3=true
         }
@@ -305,6 +298,8 @@ router.get('/login',(req,res)=>{
       let status4=false
       let status5=false
       let dataForPublishToDevice=[]
+
+      // PIN 2
       if(req.body.onOrOff2)
       {
         if(req.body.onOrOff2=='ON')
@@ -315,8 +310,43 @@ router.get('/login',(req,res)=>{
           dataForPublishToDevice.push(d)
         console.log(dataForPublishToDevice); 
       }
-      
-      // publish.publishProModeDataLedToDevice(req.session.user._id,status,req.body.onDuration5,req.body.offDuration5)
+       // PIN 3
+       if(req.body.onOrOff3)
+       {
+         if(req.body.onOrOff3=='ON')
+         {
+           status3=true
+         }
+         let d=userHelpers.proModeDataMaker(status3,req.body.onDuration3,req.body.offDuration3)
+           dataForPublishToDevice.push(d)
+         console.log(dataForPublishToDevice); 
+       }
+        // PIN 4
+      if(req.body.onOrOff4)
+      {
+        if(req.body.onOrOff4=='ON')
+        {
+          status4=true
+        }
+        let d=userHelpers.proModeDataMaker(status4,req.body.onDuration4,req.body.offDuration4)
+          dataForPublishToDevice.push(d)
+        console.log(dataForPublishToDevice); 
+      }
+       // PIN 5
+       if(req.body.onOrOff5)
+       {
+         if(req.body.onOrOff5=='ON')
+         {
+           status5=true
+         }
+         let d=userHelpers.proModeDataMaker(status5,req.body.onDuration5,req.body.offDuration5)
+           dataForPublishToDevice.push(d)
+         console.log(dataForPublishToDevice); 
+       }
+       publish.publishProModeDataLedToDevice(req.session.user._id,dataForPublishToDevice).then((status)=>{
+         console.log('DOne');
+
+       })
     })
   
     
