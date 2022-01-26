@@ -68,7 +68,42 @@ module.exports={
                   })
 
         })
+    },
+    publishProModeDataLedToDevice:(userId,onOrOff,onDuration,offDuration)=>
+    {
+        return new Promise(async(resolve,reject)=>{
+            let secondaryKey=await db.get().collection(collection.USER_CREADATIONALS).findOne({_id:objectId(userId)})
+            let topic=secondaryKey.secondary_key
+            if(onOrOff)
+            {
+                onOrOff='1'
+            }
+            else{
+                onOrOff='0'
+            }
+            let data='MD'+`${onOrOff}`+'N'+`${onDuration}`+'F'+`${offDuration}`
+            console.log(data);
+                
+            //     const client = mqtt.connect("mqtt://localhost:1883", {
+            //         clientId: " ",
+            //       });
+            //       client.on("connect", () => {
+                    
+            //         client.publish(topic, JSON.stringify(count));
+            //         console.log('sented to topic : '+topic+'   message : '+count);
+            //         client.end()
+            //        resolve({status:true})
+                  
+               
+            //   })
+             
+            
+
+        })
+      
+
     }
     
 }
+
 //

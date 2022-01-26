@@ -242,37 +242,81 @@ router.get('/login',(req,res)=>{
     userHelpers.secondaryKeyTaker(req.session.user._id).then((secKey)=>{
       console.log(secKey);
       let pin1=false
+      let led1=false
       let pin2=false
+      let led2=false
       let pin3=false
+      let led3=false
       let pin4=false
+      let led4=false
       let pin5=false
+      let led5=false
       if(data.parameter1!='none')
       {
          pin1=true
+         if(data.parameter1=='pdf')
+        {
+          led1=true
+        }
       }
       if(data.parameter2!='none')
       {
          pin2=true
+         if(data.parameter2=='aaa')
+        {
+          led2=true
+        }
       }
       if(data.parameter3!='none')
       {
          pin3=true
+         if(data.parameter3=='pdf')
+        {
+          led3=true
+        }
       }
       if(data.parameter4!='none')
       {
          pin4=true
+         if(data.parameter4=='yddddd')
+        {
+          led4=true
+        }
       }
       if(data.parameter5!='none')
       {
-         pin5=true
+        pin5=true
+        if(data.parameter5=='pdf')
+        {
+          led5=true
+        }
+         
       }
       publish.publishPinValuesToDevice(secKey,arrayData).then((status)=>{
-        res.render('pro-spec',{pin1,pin2,pin3,pin4,pin5})
+        res.render('pro-spec',{pin1,pin2,pin3,pin4,pin5,led1,led2,led3,led4,led5})
       })
     })
     })
+    
     router.post('/calculation-submit',(req,res)=>{
       console.log(req.body);
+      let status2=false
+      let status3=false
+      let status4=false
+      let status5=false
+      let dataForPublishToDevice=[]
+      if(req.body.onOrOff2)
+      {
+        if(req.body.onOrOff2=='ON')
+        {
+          status2=true
+        }
+        let d=userHelpers.proModeDataMaker(status2,req.body.onDuration2,req.body.offDuration2)
+          dataForPublishToDevice.push(d)
+        console.log(dataForPublishToDevice); 
+      }
+      
+      // publish.publishProModeDataLedToDevice(req.session.user._id,status,req.body.onDuration5,req.body.offDuration5)
     })
   
     

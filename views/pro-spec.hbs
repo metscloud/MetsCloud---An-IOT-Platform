@@ -18,6 +18,19 @@
     <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="Pin2GreaterOrEqualto"></textarea>
             <p>less than <= </p>
     <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="Pin2LessOrEqualto"></textarea>
+    {{#if led2}}
+    <div class="form-group">
+    <label for="exampleFormControlTextarea1"><h3>LED</h3><label>
+       <select class="form-control" id="exampleFormControlSelect1" name="onOrOff2">
+              <option>ON</option>
+        <option>OFF</option>
+   </select>
+        <p>On Duration</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="onDuration2"></textarea>
+            <p>Off Duratioin</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="offDuration2"></textarea>
+    </div>
+  {{/if}}
   </div>
   {{/if}}
 
@@ -29,6 +42,19 @@
     <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="Pin3GreaterOrEqualto"></textarea>
             <p>less than <= </p>
     <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="Pin3LessOrEqualto"></textarea>
+    {{#if led3}}
+    <div class="form-group">
+    <label for="exampleFormControlTextarea1"><h3>LED</h3><label>
+       <select class="form-control" id="exampleFormControlSelect1" name="onOrOff3">
+              <option>ON</option>
+        <option>OFF</option>
+   </select>
+        <p>On Duration</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="onDuration3"></textarea>
+            <p>Off Duratioin</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="offDuration3"></textarea>
+    </div>
+  {{/if}}
   </div>
   {{/if}}
 
@@ -40,7 +66,21 @@
     <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="Pin4GreaterOrEqualto"></textarea>
             <p>less than <= </p>
     <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="Pin4LessOrEqualto"></textarea>
+    {{#if led4}}
+    <div class="form-group">
+    <label for="exampleFormControlTextarea1"><h3>LED</h3><label>
+       <select class="form-control" id="exampleFormControlSelect1" name="onOrOff4">
+              <option>ON</option>
+        <option>OFF</option>
+   </select>
+        <p>On Duration</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="onDuration4"></textarea>
+            <p>Off Duratioin</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="offDuration4"></textarea>
+    </div>
+  {{/if}}
   </div>
+
   {{/if}}
 
     {{#if pin5}}
@@ -50,8 +90,23 @@
     <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="Pin5GreaterOrEqualto"></textarea>
             <p>less than <= </p>
     <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="Pin5LessOrEqualto"></textarea>
-  </div>
+   {{#if led5}}
+    <div class="form-group">
+    <label for="exampleFormControlTextarea1"><h3>LED {{led5}}</h3><label>
+       <select class="form-control" id="exampleFormControlSelect1" name="onOrOff5">
+              <option>ON</option>
+        <option>OFF</option>
+   </select>
+        <p>On Duration</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="onDuration5"></textarea>
+            <p>Off Duratioin</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="offDuration5"></textarea>
+    </div>
   {{/if}}
+    </div>
+  {{/if}}
+
+
 
      <button type="submit" class="btn btn-primary">Submit</button>
 </form>

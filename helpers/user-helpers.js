@@ -267,6 +267,22 @@ secondaryKeyTaker:(id)=>{
             resolve(response.secondary_key)
         })
     })
+},
+
+proModeDataMaker:(onOrOff,onDuration,offDuration)=>
+{
+  
+      
+        if(onOrOff)
+        {
+            onOrOff='1'
+        }
+        else{
+            onOrOff='0'
+        }
+        let data='MD'+`${onOrOff}`+'N'+`${onDuration}`+'F'+`${offDuration}`
+        return data
+
 }
 
 
