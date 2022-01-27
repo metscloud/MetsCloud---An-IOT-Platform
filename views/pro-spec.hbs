@@ -3,13 +3,24 @@
 
 <form method="post" action="/calculation-submit">
 
-
+{{!-- PIN 1 --}}
     {{#if pin1}}
   <div class="form-group">
     <label for="exampleFormControlTextarea1">PIN 1</label>
     <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="PIN1"></textarea>
   </div>
   {{/if}}
+   
+{{!-- PIN 2 --}}
+   {{#if pwm2}}
+     <div class="form-group">
+    <label for="exampleFormControlTextarea1"><h3>PWM</h3><label>
+        <p>Time Period (0-255)</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="timePeriod2"></textarea>
+            <p>Duty cycle (%)</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="dutyCycle2"></textarea>
+  </div>
+  {{else}}
 
     {{#if pin2}}
   <div class="form-group">
@@ -34,7 +45,19 @@
   </div>
   {{/if}}
 
+  {{/if}}
 
+
+   {{!--PIN 3  --}}
+      {{#if pwm3}}
+     <div class="form-group">
+    <label for="exampleFormControlTextarea1"><h3>PWM</h3><label>
+        <p>Time Period (0-255)</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="timePeriod3"></textarea>
+            <p>Duty cycle (%)</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="dutyCycle3"></textarea>
+  </div>
+  {{else}}
     {{#if pin3}}
   <div class="form-group">
     <label for="exampleFormControlTextarea1"><h3>PIN 3</h3><label>
@@ -57,8 +80,18 @@
   {{/if}}
   </div>
   {{/if}}
+  {{/if}}
 
-
+{{!-- PIN 4 --}}
+      {{#if pwm4}}
+     <div class="form-group">
+    <label for="exampleFormControlTextarea1"><h3>PWM</h3><label>
+        <p>Time Period (0-255)</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="timePeriod4"></textarea>
+            <p>Duty cycle (%)</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="dutyCycle4"></textarea>
+  </div>
+  {{else}}
     {{#if pin4}}
   <div class="form-group">
     <label for="exampleFormControlTextarea1"><h3>PIN 4</h3><label>
@@ -80,9 +113,20 @@
     </div>
   {{/if}}
   </div>
-
+{{/if}}
   {{/if}}
 
+    {{#if pwm5}}
+     <div class="form-group">
+    <label for="exampleFormControlTextarea1"><h3>PWM</h3><label>
+        <p>Time Period (0-255)</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="timePeriod5"></textarea>
+            <p>Duty cycle (%)</p>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="dutyCycle5"></textarea>
+  </div>
+  {{else}}
+
+{{!-- PIN 5 --}}
     {{#if pin5}}
   <div class="form-group">
     <label for="exampleFormControlTextarea1"><h3>PIN 5</h3><label>
@@ -104,6 +148,7 @@
     </div>
   {{/if}}
     </div>
+  {{/if}}
   {{/if}}
 
 

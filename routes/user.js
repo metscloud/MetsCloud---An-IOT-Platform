@@ -239,6 +239,7 @@ router.get('/login',(req,res)=>{
       let pin='0'
       arrayData.push(pin)
     }
+    console.log(arrayData);
     userHelpers.secondaryKeyTaker(req.session.user._id).then((secKey)=>{
       console.log(secKey);
       let pin1=false
@@ -251,6 +252,10 @@ router.get('/login',(req,res)=>{
       let led4=false
       let pin5=false
       let led5=false
+      let pwm2=false
+      let pwm3=false
+      let pwm4=false
+      let pwm5=false
       
       if(data.parameter2!='none')
       {
@@ -258,6 +263,10 @@ router.get('/login',(req,res)=>{
          if(data.parameter2=='aaa')
         {
           led2=true
+        }
+        if(data.parameter2=='pwm')
+        {
+          pwm2=true
         }
       }
       if(data.parameter3!='none')
@@ -267,6 +276,10 @@ router.get('/login',(req,res)=>{
         {
           led3=true
         }
+        if(data.parameter3=='pwm')
+        {
+          pwm3=true
+        }
       }
       if(data.parameter4!='none')
       {
@@ -274,6 +287,10 @@ router.get('/login',(req,res)=>{
          if(data.parameter4=='yddddd')
         {
           led4=true
+        }
+        if(data.parameter4=='pwm')
+        {
+          pwm4=true
         }
       }
       if(data.parameter5!='none')
@@ -283,10 +300,14 @@ router.get('/login',(req,res)=>{
         {
           led5=true
         }
+        if(data.parameter5=='pwm')
+        {
+          pwm5=true
+        }
          
       }
       publish.publishPinValuesToDevice(secKey,arrayData).then((status)=>{
-        res.render('pro-spec',{pin1,pin2,pin3,pin4,pin5,led1,led2,led3,led4,led5})
+        res.render('pro-spec',{pin1,pin2,pin3,pin4,pin5,led1,led2,led3,led4,led5,pwm2,pwm3,pwm4,pwm5})
       })
     })
     })
