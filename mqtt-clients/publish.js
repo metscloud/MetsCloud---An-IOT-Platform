@@ -74,6 +74,7 @@ module.exports={
         return new Promise(async(resolve,reject)=>{
             let secondaryKey=await db.get().collection(collection.USER_CREADATIONALS).findOne({_id:objectId(userId)})
             let topic=secondaryKey.secondary_key
+            data='Pmode '+`${data[0]} `+`${data[1]} `+`${data[2]} `+`${data[3]} `+`${data[4]}`
          
                 
                 const client = mqtt.connect("mqtt://localhost:1883", {

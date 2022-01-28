@@ -425,8 +425,28 @@ router.get('/login',(req,res)=>{
       console.log(req.body.keys);
       console.log(dataForPublishToDevice);
       console.log(pwmData);
+      let fin=req.body.keys
+      let finData=fin.split(",")
+      for(let i=0;i<=4;i++)
+      {
+        if(finData[i]=='led')
+        {
+       
+          finData[i]=dataForPublishToDevice[i]
+          console.log(dataForPublishToDevice[i]);
+        }
+        if(finData[i]=='pwm')
+        {
+          finData[i]=pwmData[i]
+        }
+  
+    
+      }
+      console.log('FINALLLLLLLLL');
+      console.log(finData);
+      console.log(JSON.stringify(finData));
      
-       publish.publishProModeDataLedToDevice(req.session.user._id,dataForPublishToDevice).then((status)=>{
+       publish.publishProModeDataLedToDevice(req.session.user._id,finData).then((status)=>{
          console.log('DOne');
 
        })
