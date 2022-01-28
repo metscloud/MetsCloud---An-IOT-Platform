@@ -283,6 +283,12 @@ proModeDataMaker:(onOrOff,onDuration,offDuration)=>
         let data='MD'+`${onOrOff}`+'N'+`${onDuration}`+'F'+`${offDuration}`
         return data
 
+},
+proPwmDataMaker:(timePeriod,dutyCycle)=>{
+
+    let data='WMP'+`${timePeriod}`+'C'+`${dutyCycle}`
+    return data
+
 }
 
 

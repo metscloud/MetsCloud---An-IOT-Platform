@@ -260,7 +260,7 @@ router.get('/login',(req,res)=>{
       if(data.parameter2!='none')
       {
          pin2=true
-         if(data.parameter2=='aaa')
+         if(data.parameter2=='led')
         {
           led2=true
         }
@@ -272,7 +272,7 @@ router.get('/login',(req,res)=>{
       if(data.parameter3!='none')
       {
          pin3=true
-         if(data.parameter3=='lm35')
+         if(data.parameter3=='led')
         {
           led3=true
         }
@@ -284,7 +284,7 @@ router.get('/login',(req,res)=>{
       if(data.parameter4!='none')
       {
          pin4=true
-         if(data.parameter4=='yddddd')
+         if(data.parameter4=='led')
         {
           led4=true
         }
@@ -296,7 +296,7 @@ router.get('/login',(req,res)=>{
       if(data.parameter5!='none')
       {
         pin5=true
-        if(data.parameter5=='pdf')
+        if(data.parameter5=='led')
         {
           led5=true
         }
@@ -307,18 +307,21 @@ router.get('/login',(req,res)=>{
          
       }
       publish.publishPinValuesToDevice(secKey,arrayData).then((status)=>{
-        res.render('pro-spec',{pin1,pin2,pin3,pin4,pin5,led1,led2,led3,led4,led5,pwm2,pwm3,pwm4,pwm5})
+        res.render('pro-spec',{pin1,pin2,pin3,pin4,pin5,led1,led2,led3,led4,led5,pwm2,pwm3,pwm4,pwm5,arrayData})
       })
     })
     })
     
     router.post('/calculation-submit',(req,res)=>{
       console.log(req.body);
+
+      // here the status is to indicate the led is on/off
       let status2=false
       let status3=false
       let status4=false
       let status5=false
-      let dataForPublishToDevice=[]
+      let dataForPublishToDevice=['0']
+      let pwmData=['0']
 
       // PIN 2
       if(req.body.onOrOff2)
@@ -331,6 +334,20 @@ router.get('/login',(req,res)=>{
           dataForPublishToDevice.push(d)
         console.log(dataForPublishToDevice); 
       }
+      else
+      {
+        dataForPublishToDevice.push('0')
+      }
+      if(req.body.timePeriod2)
+      {
+        let data=userHelpers.proPwmDataMaker(req.body.timePeriod2,req.body.dutyCycle2)
+        pwmData.push(data)
+      }
+      else
+      {
+        pwmData.push('0')
+      }
+
        // PIN 3
        if(req.body.onOrOff3)
        {
@@ -342,6 +359,20 @@ router.get('/login',(req,res)=>{
            dataForPublishToDevice.push(d)
          console.log(dataForPublishToDevice); 
        }
+       else
+       {
+        dataForPublishToDevice.push('0')
+      }
+      if(req.body.timePeriod3)
+      {
+        let data=userHelpers.proPwmDataMaker(req.body.timePeriod3,req.body.dutyCycle3)
+        pwmData.push(data)
+      }
+      else
+      {
+        pwmData.push('0')
+      }
+
         // PIN 4
       if(req.body.onOrOff4)
       {
@@ -353,6 +384,20 @@ router.get('/login',(req,res)=>{
           dataForPublishToDevice.push(d)
         console.log(dataForPublishToDevice); 
       }
+      else
+      {
+        dataForPublishToDevice.push('0')
+      }
+      if(req.body.timePeriod4)
+      {
+        let data=userHelpers.proPwmDataMaker(req.body.timePeriod4,req.body.dutyCycle4)
+        pwmData.push(data)
+      }
+      else
+      {
+        pwmData.push('0')
+      }
+
        // PIN 5
        if(req.body.onOrOff5)
        {
@@ -364,6 +409,23 @@ router.get('/login',(req,res)=>{
            dataForPublishToDevice.push(d)
          console.log(dataForPublishToDevice); 
        }
+       else
+       {
+        dataForPublishToDevice.push('0')
+      }
+      if(req.body.timePeriod5)
+      {
+        let data=userHelpers.proPwmDataMaker(req.body.timePeriod5,req.body.dutyCycle5)
+        pwmData.push(data)
+      }
+      else
+      {
+        pwmData.push('0')
+      }
+      console.log(req.body.keys);
+      console.log(dataForPublishToDevice);
+      console.log(pwmData);
+     
        publish.publishProModeDataLedToDevice(req.session.user._id,dataForPublishToDevice).then((status)=>{
          console.log('DOne');
 

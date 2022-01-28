@@ -152,6 +152,13 @@
   {{/if}}
 
 
-
+  <div class="form-group">
+    <label for="exampleFormControlTextarea1"><h3>data from  previous</h3><label>
+      {{#each arrayData}}
+   <p>{{this}}</p>
+   {{/each}}
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="1" name="keys" value="{{arrayData}}">{{arrayData}}</textarea>
+   
+  </div>
      <button type="submit" class="btn btn-primary">Submit</button>
 </form>
