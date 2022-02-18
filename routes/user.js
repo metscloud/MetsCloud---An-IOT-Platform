@@ -11,13 +11,22 @@ var sensorDataProgrammingMode=require('../static-data/sensorData-programmingMode
 
 const verifyLogin=(req,res,next)=>{
   if(req.session.loggedIn){
+    console.warn("User already logged in");
     next()
   }
   else{
-    res.render('store/user/login')
+    res.render('login')
   }
 }
+router.get('/catching',(req,res)=>{
+  res.render('catching')
 
+})
+router.post('/generatekey',(req,res)=>{
+  userHelpers.keyGenaratorCatching().then((response)=>{
+    res.redirect(req.get('referer'));
+  })
+})
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -25,6 +34,17 @@ router.get('/', function(req, res, next) {
   res.render('index',{admin:false});
 
 });
+// router.get('/:id', (req, res)=> {
+//   console.log(req.params.id);
+//   userHelpers.checkCachingData(req.params.id).then((response)=>{
+//     console.log('CATCH ID FOUNDED');
+//     console.log(response);
+//     res.json(response);
+//   })
+
+ 
+
+// });
 router.get('/signup', function(req, res, next) {
   res.render('signup',{admin:false});
 });
@@ -52,38 +72,86 @@ router.get('/login',(req,res)=>{
   res.render('login',{admin:false})
 
 })
-  router.post('/login',(req,res)=>{
+  router.post('/login',async(req,res)=>{
     console.log('submitting login page requestes...');
     console.log(req.body);
-    userHelpers.doLogin(req.body).then((response)=>{
-      if(response.status){
-        req.session.loggedIn=true
+    userHelpers.doLogin(req.body).then(async(response)=>{
+      let uartStatus=false
+      let dataUart
+      let option1
+      let option2
+      let option3
+      let option4
+      let option5
+
+      //status checker
+      if(response.status)
+      {
+        // req.session.loggedIn=true
         req.session.user=response.user
         let firstConnect=false
         if(response.user.firstConnect===true)
         {
           firstConnect=true
-        }else{
+        }
+        else
+        {
           firstConnect=false
         }
+
         console.log(response.user);
-        let data={
+        let data=
+        {
           email:response.user.email,
           dtopic:response.user.defaultTopic,
           liveMode:response.user.liveMode,
-          
+        }
+        console.log(data);
+
+       
+        if(response.user.liveMode==='uart')
+        {
+          uartStatus=true
+          console.log(uartStatus);
+          console.log(req.session.user._id);
+          let a=req.session.user._id     
+           await userHelpers.getUartSubscribtions(objectId(a).toString()).then((response)=>
+          {
+         
+            if(response)
+            { 
+               dataUart=response.uartMode
+               console.log(dataUart);
+        
+            }
+            else
+            {
+              console.log('Failed to fetch data');
+              
+            }
+            })
+
 
         }
-
-        
-        res.render('account',{data,firstConnect})
-      }else{
+        else
+        {
+          option1=await userHelpers.settingPinToOptions('1')
+          option2=await userHelpers.settingPinToOptions('2')
+          option3=await userHelpers.settingPinToOptions('3')
+          option4=await userHelpers.settingPinToOptions('4')
+          option5=await userHelpers.settingPinToOptions('5')
+          
+        }
+        res.render('account',{data,firstConnect,uartStatus,dataUart,option1,option2,option3,option4,option5})
+      }
+      else
+      {
         req.session.loginErr="Invalied Username or Password"
         res.redirect('/')
       }
     })
   })
-  router.get('/connect/:id',verifyLogin,(req,res)=>{
+  router.get('/connect/:id',(req,res)=>{
     userHelpers.pickSecondaryKey(req.params.id).then((secKey)=>{
       publish.publishSecondaryKeyToDevice(req.params.id,secKey)
 
@@ -93,6 +161,7 @@ router.get('/login',(req,res)=>{
  
   
   })
+
   router.get('/uart',(req,res)=>{
     userHelpers.getUartSubscribtions(req.session.user._id).then((response)=>{
     if(response)
@@ -104,11 +173,12 @@ router.get('/login',(req,res)=>{
     }
     })
   })
+
   router.post('/uart-submit',async(req,res)=>{
     let urtParameter=req.body
      await userHelpers.uartAndProgrammingModeStore(req.session.user._id,urtParameter)
      publish.publishCountToDevice(req.session.user._id).then((status)=>{
-       res.redirect('/uart')
+      res.redirect(req.get('referer'));
      })
    
   })
@@ -136,25 +206,34 @@ router.get('/login',(req,res)=>{
 
     })
   })
+
+
   router.get('/selected-uart',(req,res)=>{
-    console.log(req.session.user._id);
-    userHelpers.liveModeChanger(req.session.user._id,'uart').then((res)=>{
-     console.log(res);
-     if(res.status)
+
+    userHelpers.liveModeChanger(req.session.user._id,'uart').then((data)=>{
+  
+   
+     if(data.status)
      {
-      console.log('Successfully updated the live mode to UART MODE');
-     }else{
+      res.redirect(req.get('referer'));
+      
+     }
+     else
+     {
       console.log('failed to update the live mode');
      }
     })
   })
+
+
   router.get('/selected-programming',(req,res)=>{
-    userHelpers.liveModeChanger(req.session.user._id,'pro').then((res)=>{
-      console.log(res);
-      if(res.status)
+    userHelpers.liveModeChanger(req.session.user._id,'pro').then(async(data)=>{
+      if(data.status)
       {
-       console.log('Successfully updated the live mode to PROGRAMMING MODE');
-      }else{
+        res.redirect(req.get('referer'));
+      }
+      else
+      {
        console.log('failed to update the live mode');
       }
      })

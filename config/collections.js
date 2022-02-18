@@ -14,6 +14,7 @@ module.exports={
     UART_SUBSCRIPTIONS:'uartSubscribtions',
     TEST:'test',
     SENSORS:'sensors',
+    CATCHING_KEYS:'catchingKeys',
     // USER_CREADATIONALS:'userCreadationals'
 
 

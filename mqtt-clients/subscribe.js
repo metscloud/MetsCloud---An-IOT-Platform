@@ -74,7 +74,9 @@ const { log } = require('debug');
 
           client.on("connect", async function () {
              let topic= await userHelpers.getAllSecKeys()
-            client.subscribe(topic);
+            //  console.log(topic.catchKeysIds);
+            //  console.log(topic.finalKeys);
+            client.subscribe(topic.finalKeys);
           });
 
           client.on("message", function (topic, message) {
@@ -84,6 +86,8 @@ const { log } = require('debug');
 
  ////////////////////////////  //  _________Process after recieving a message________ //////////////////////////////////////////
 
+
+ // KEY CONFORMATION
           if(context==='krs')
           {
             console.log('Conformation recieved ');
@@ -105,6 +109,8 @@ const { log } = require('debug');
         
           }
 
+
+// MODE CHECKING
           else if(context==='MODE?')
           {
             return new Promise(async(resolve,reject)=>
@@ -117,6 +123,12 @@ const { log } = require('debug');
               console.log('sented to topic : '+topic+'   message : '+mode);
             })
           }
+
+ //catching
+else if(context==='catch')
+{
+
+}
 
           else
           {

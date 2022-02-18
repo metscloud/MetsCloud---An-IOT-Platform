@@ -1,0 +1,45 @@
+<form action="/uart-submit" method="POST">
+
+  <div class="form-group">
+    <label for="exampleFormControlSelect1">Select Parameter</label>
+    <select class="form-control" id="exampleFormControlSelect1" name="parameter">
+      <option>Temperature</option>
+      <option>Humidity</option>
+      <option>Power</option>
+      <option>Status</option>
+      <option>Data</option>
+      <option>Time</option>
+      <option>String</option>
+      <option>Location</option>
+      <option>Pressure</option>
+    </select>
+  </div>
+ 
+  <div class="form-group">
+    <label for="exampleFormControlTextarea1">Nick name</label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="nickname"></textarea>
+  </div>
+   <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<table class="table table-dark">
+  <thead>
+    <tr>
+      
+      <th scope="col">Parameter</th>
+      <th scope="col">Nick Name</th>
+      <th scope="col">Option</th>
+    </tr>
+  </thead>
+  <tbody>
+      {{#each dataUart}}
+    <tr>
+     
+      <td>{{this.parameter}}</td>
+      <td>{{this.nickname}}</td>
+      <td><a href="/uart-delete-parameter/{{this.Id}}" class="btn btn-danger" onclick="return confirm('Are you want to delete  {{this.nickname}}')">Delete</a></td>
+    <td><a href="/uart-view-parameter/{{this.Id}}" class="btn btn-success" >View</a></td>
+   
+    </tr>
+    {{/each}}
+  </tbody>
+</table>

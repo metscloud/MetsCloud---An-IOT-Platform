@@ -28,6 +28,12 @@
    
   </div>
 </div>
+{{#if uartStatus}}
+{{>uart}}
+{{else}}
+{{>pro}}
+{{/if}}
+
 
 
 
@@ -42,6 +48,7 @@
               <hr>
             <div>
   <canvas id="myChart"></canvas>
+  
     <canvas id="Chart"></canvas>
 </div>
         </div>

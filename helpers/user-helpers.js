@@ -169,8 +169,18 @@ module.exports={
     getAllSecKeys:()=>{
         return new Promise(async(resolve,reject)=>{
             let keys=await db.get().collection(collection.USER_CREADATIONALS).find({}).project({_id:0,email:0,password:0,defaultTopic:0,firstConnect:0, primary_key:0,ph:0,}).toArray()
+            let catchKeys=await db.get().collection(collection.CATCHING_KEYS).find({}).project({_id:0}).toArray()
             let finalKeys=[]
+            let catchKeysIds=[]
             let length=keys.length
+            let lengthCatchKeys=catchKeys.length
+            for(let j=0; j<=lengthCatchKeys-1;j++)
+            {
+                
+                let temp=catchKeys[j].key
+                catchKeysIds.push(temp)
+                 
+            }
             for(let i=0; i<=length-1;i++)
             {
                 
@@ -180,7 +190,7 @@ module.exports={
             }
             console.log('####### TOPICS ARE #######');
             console.log(finalKeys);
-            resolve(finalKeys)
+            resolve({finalKeys,catchKeysIds})
         })
 
     },
@@ -289,7 +299,44 @@ proPwmDataMaker:(timePeriod,dutyCycle)=>{
     let data='WMP'+`${timePeriod}`+'C'+`${dutyCycle}`
     return data
 
-}
+},
+
+// keyGenaratorCatching:()=>
+// {
+//     return new Promise(async(resolve,reject)=>{
+//         chars: true
+//         sticks: false
+//         numbers: true
+//        specials: false
+//         sticks: false
+//         length: 2
+//         forceUppercase: false
+//         forceLowercase: false
+//        exclude:[ ]
+//       let generatedKey=keygen.password();
+//       let rnumber=random.int((min = 1000), (max = 9999))
+//       console.log('Secondary Key :::'+generatedKey);
+//     var obj={
+//         key:rnumber+generatedKey
+//     }
+//       await db.get().collection(collection.CATCHING_KEYS).insertOne(obj).then((response)=>{
+//           resolve(response)
+//       })
+//     })
+  
+
+// },
+// checkCachingData:(key)=>{
+//     return new Promise(async(resolve,reject)=>{
+//         await db.get().collection(collection.CATCHING_KEYS).findOne({key:key}).then((response)=>{
+//             resolve(response)
+//         })
+//     })
+// },
+
+
+
+
 
 
 }

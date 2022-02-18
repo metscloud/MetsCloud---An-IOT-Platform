@@ -1,0 +1,27 @@
+<h1><center>CATCHING</center></h1>
+
+<h3>Generate key</h3>
+<form class="form-inline" action="/generatekey" method="POST">
+
+  <button type="submit" class="btn btn-primary mb-2">Generate</button>
+</form>
+{{!-- ______________________________________________ --}}
+
+<table class="table table-dark">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Key</th>
+   
+    </tr>
+  </thead>
+  <tbody>
+      {{#each allKeys}}
+    <tr>
+      <th scope="row">#</th>
+      <td>{{this.key}}</td>
+
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
