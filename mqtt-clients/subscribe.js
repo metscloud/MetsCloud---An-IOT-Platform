@@ -6,6 +6,8 @@ const mqtt = require("mqtt");
 const { response } =  require('express');
 var userHelpers=require('../helpers/user-helpers');
 const { log } = require('debug');
+var adminHelpers=require('../helpers/admin-helpers');
+
 
 
 
@@ -73,13 +75,38 @@ const { log } = require('debug');
           });
 
           client.on("connect", async function () {
-             let topic= await userHelpers.getAllSecKeys()
+            //  let topic= await userHelpers.getAllSecKeys()
             //  console.log(topic.catchKeysIds);
             //  console.log(topic.finalKeys);
-            client.subscribe(topic.finalKeys);
-          });
+            // client.subscribe(topic.finalKeys);
 
-          client.on("message", function (topic, message) {
+            //for testing mqtt capacity and speed
+            
+            const array=[]
+            for (let index = 0; index < 1000000; index++) 
+            {
+              let temp= index.toString()
+               array.push(temp);
+    
+            }
+                console.log(array);
+                client.subscribe(array);
+                });
+
+          client.on("message", function (topic, message)
+           {
+            // for testing
+
+             let obj={
+               Topic:topic,
+               MES: message.toString()
+             }
+             adminHelpers.testing(obj).then((res)=>{
+               console.log('done');
+             })
+         
+  
+            //
             console.log("TOPIC ::"+topic);
             context = message.toString();
             console.log("MESSAGE ::"+context)

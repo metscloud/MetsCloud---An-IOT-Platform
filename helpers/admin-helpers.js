@@ -101,5 +101,26 @@ sensorDataToEdit:(id)=>{
     })
 },
 
+//
+testing:(obj)=>{
+
+    return new Promise((resolve,reject)=>{
+        db.get().collection(collection.TESTING).insertOne(obj).then((response)=>{
+            resolve(response)
+          
+        })
+    })
+},
+getTesting:()=>{
+    return new Promise(async(resolve,reject)=>{
+        await db.get().collection(collection.TESTING).find().toArray().then((test)=>{
+            resolve(test)
+          
+        })
+    })
+
+}
+
+//
 
 }

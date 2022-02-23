@@ -264,6 +264,14 @@ router.post('/edit-sensorddata/:id',(req,res)=>{
 
 })
 
+router.get('/testing',(req,res)=>{
+
+  adminHelpers.getTesting().then((data)=>{
+    console.log(data);
+    res.render('testing',{admin:true,data})
+  })
+})
+
 module.exports = router;
 
 

@@ -15,6 +15,9 @@ module.exports={
     TEST:'test',
     SENSORS:'sensors',
     CATCHING_KEYS:'catchingKeys',
+
+    //for testing mqtt capacity and speed
+    TESTING:'testing',
     // USER_CREADATIONALS:'userCreadationals'
 
 
