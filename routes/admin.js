@@ -272,6 +272,23 @@ router.get('/testing',(req,res)=>{
   })
 })
 
+router.post('/searchfortopics',(req,res)=>{
+console.log(req.body);
+adminHelpers.searchTopics(req.body).then((data)=>{
+  console.log("IS NOT THERE :"+data);
+  console.log(data);
+  res.render('searchNonTopic',{admin:true,data})
+
+})
+})
+
+router.get('/cleardata',(req,res)=>{
+  adminHelpers.clearData().then((data)=>{
+    console.log(data);
+    res.redirect('/admin/testing')
+  })
+})
+
 module.exports = router;
 
 

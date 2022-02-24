@@ -119,8 +119,52 @@ getTesting:()=>{
         })
     })
 
-}
+},
+searchTopics:(limit)=>{
+    let array=[]
+    let missing=[]
+   
+    return new Promise(async(resolve,reject)=>{
+        await db.get().collection(collection.TESTING).find().toArray().then((data)=>{
 
+            for (let i = 0; i < data.length; i++) 
+            {
+              let temp=parseInt(data[i].Topic)
+              if(temp>=parseInt(limit.from) && temp<=parseInt(limit.to) )
+              {
+                array.push(temp)
+
+              }
+
+                
+            }
+            console.log("IS THERE :"+array);
+
+            
+            let a = array
+            let count = limit.to
+       
+          
+          for (let i = parseInt(limit.from); i <= parseInt(count); i++) {
+            if (a.indexOf(i) === -1) {
+              missing.push(i)
+            }
+          }
+          
+  
+            resolve(missing)
+          
+        })
+    })
+
+},
+clearData:()=>{
+    return new Promise(async(resolve,reject)=>{
+        await db.get().collection(collection.TESTING).remove({}).then((response)=>{
+            resolve(response)
+        })
+    })
+}
 //
 
 }

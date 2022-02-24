@@ -83,7 +83,7 @@ var adminHelpers=require('../helpers/admin-helpers');
             //for testing mqtt capacity and speed
             
             const array=[]
-            for (let index = 0; index < 1000000; index++) 
+            for (let index = 0; index < 100000; index++) 
             {
               let temp= index.toString()
                array.push(temp);

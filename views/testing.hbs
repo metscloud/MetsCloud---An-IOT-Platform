@@ -1,4 +1,28 @@
 <center><h1>TESTING</h1></center>
+
+<center><p><i>Sent data to topics only in order...like (1,2,3,...)</i></p></center>
+<h6>Search for Topics</h6>
+
+<form action="/admin/searchfortopics" method="POST">
+
+   <div class="form-group">
+    <label for="formGroupExampleInput">From</label>
+    <input type="text" class="form-control" id="formGroupExampleInput"  name="from">
+  </div>
+   <div class="form-group">
+    <label for="formGroupExampleInput">To</label>
+    <input type="text" class="form-control" id="formGroupExampleInput"  name="to">
+  </div>
+  <br>
+  <button type="submit" class="btn btn-primary">Search</button>
+</form>
+<br>
+<br>
+<center><a href="/admin/cleardata" class="btn btn-danger">Clear Data</a></center>
+<br>
+<br
+
+
 {{#each data}}
 <p>Topic {{Topic}}</p>
 <p>MEs {{MES}}</p>
