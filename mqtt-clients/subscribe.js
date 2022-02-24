@@ -85,7 +85,7 @@ var adminHelpers=require('../helpers/admin-helpers');
             const array=[]
 
 
-            for (let index = 0; index < 10000; index++) 
+            for (let index = 0; index < 100000; index++) 
 
             {
               let temp= index.toString()
