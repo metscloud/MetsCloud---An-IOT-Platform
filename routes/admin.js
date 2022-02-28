@@ -5,11 +5,14 @@ var blogUserHelpers=require('../helpers/blog-user-helpers')
 var adminHelpers=require('../helpers/admin-helpers')
 var storeProductHelper=require('../helpers/store-product-helpers')
 var storeAdminHelpers=require('../helpers/store-admin-helpers')
+var broker=require('../mqtt-broker/broker-aedes')
 
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
- res.render('admin',{admin:true})
+  let clients=broker.connectedClients()
+  let numberClients=broker.numberOfConnectedClients()
+ res.render('admin',{admin:true,clients,numberClients})
 });
 router.get('/key',(req,res)=>{
   adminHelpers.keyViewer().then((allKeys)=>{
@@ -287,6 +290,18 @@ router.get('/cleardata',(req,res)=>{
     console.log(data);
     res.redirect('/admin/testing')
   })
+})
+
+router.get('/soil',(req,res)=>{
+  res.render('soil',{admin:true})
+})
+
+router.get('/closeMQTTserver',(req,res)=>{
+  // need to set authetication for this process
+  broker.closeMQTTserver()
+  
+  res.redirect(req.get('referer'));
+
 })
 
 module.exports = router;

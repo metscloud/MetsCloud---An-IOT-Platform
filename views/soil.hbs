@@ -1,11 +1,6 @@
-<h1><center>ADMIN PAGE</center></h1>
+<center><h1>Control Pannel </h1></center>
 <br>
-<br>
-<h5>Connected devices({{numberClients}}) live </h5> 
-<br>
-<br>
-<a href="/admin/closeMQTTserver" class="btn btn-danger" onclick="return confirm('Are you sure to CLOSE THE MQTT SERVER')">Close MQTT SERVER</a>
-<br>
+
 <br>
 
 
@@ -14,21 +9,24 @@
     <tr>
       
       <th scope="col">Client ID</th>
-  
+      <th scope="col">Ph number</th>
+      <th scope="col">Valied upto</th>
+      <th scope="col"></th>
      
     </tr>
   </thead>
   <tbody>
-{{#each clients}}
+
     <tr>
-     <td>{{this}}</td>
-      
+     <td></td>
+       <td></td>
+         <td></td>
+           <td></td>
    
       <td><a href="" class="btn btn-danger" onclick="return confirm('Are you want to Disconnect the Device  ')">Disconnect</a></td>
     <td><a href="" class="btn btn-success" >View</a></td>
    
     </tr>
-{{/each}}
 
   </tbody>
 </table>

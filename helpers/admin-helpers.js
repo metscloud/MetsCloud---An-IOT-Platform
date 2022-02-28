@@ -164,7 +164,9 @@ clearData:()=>{
             resolve(response)
         })
     })
-}
+},
+
+
 //
 
 }
