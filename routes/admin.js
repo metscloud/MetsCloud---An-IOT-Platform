@@ -12,6 +12,8 @@ var broker=require('../mqtt-broker/broker-aedes')
 router.get('/', function(req, res, next) {
   let clients=broker.connectedClients()
   let numberClients=broker.numberOfConnectedClients()
+  let sta=broker.masterDeviceStatus()
+  console.log(sta);
  res.render('admin',{admin:true,clients,numberClients})
 });
 router.get('/key',(req,res)=>{

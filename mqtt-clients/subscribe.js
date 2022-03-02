@@ -7,6 +7,12 @@ const { response } =  require('express');
 var userHelpers=require('../helpers/user-helpers');
 const { log } = require('debug');
 var adminHelpers=require('../helpers/admin-helpers');
+var broker=require('../mqtt-broker/broker-aedes')
+
+//Broker
+const aedes = require("aedes")();
+const server = require("net").createServer(aedes.handle);
+const port = 1883;
 
 
 
@@ -68,20 +74,25 @@ var adminHelpers=require('../helpers/admin-helpers');
 
     lifeTimeSubscriber:()=>
           {
+            
            
             const client = mqtt.connect("mqtt://localhost:1883", {
-            clientId: " ",
+            clientId: "Server Client",
+
             
           });
 
+          
+
           client.on("connect", async function () {
+       
             //  let topic= await userHelpers.getAllSecKeys()
             //  console.log(topic.catchKeysIds);
             //  console.log(topic.finalKeys);
             // client.subscribe(topic.finalKeys);
 
             //for testing mqtt capacity and speed
-            
+         
             const array=[]
 
 
@@ -137,6 +148,16 @@ var adminHelpers=require('../helpers/admin-helpers');
               })
           })
         
+          }
+
+          else if(broker.masterDeviceStatus()===true)
+          {
+            if(context==='Sn_no?')
+            {
+              //add data from DB
+
+            }
+
           }
 
 

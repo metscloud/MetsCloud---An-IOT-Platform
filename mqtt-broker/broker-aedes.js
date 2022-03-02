@@ -3,10 +3,11 @@ var db =require('../config/connection')
 var collection= require('../config/collections')
 var objectId=require('mongodb').ObjectID
 var connectedClients=[]
+var masterDevice=false
 const aedes = require("aedes")();
 const server = require("net").createServer(aedes.handle);
 const port = 1883;
-
+const mqtt = require("mqtt");
 
 
 
@@ -23,6 +24,10 @@ module.exports={
     aedes.close(()=>{
       console.log('MQTT server closed');
     })
+
+  },
+  masterDeviceStatus:()=>{
+    return masterDevice
 
   },
  
@@ -44,6 +49,12 @@ module.exports={
 
     aedes.on("client",async function (client) {
       console.log(`______Client Connected_____:  ${client.id}`)
+      if(client.id==="hi" )
+      {
+        console.log(">>>>>>>>>>>>    Master Device CONNECTED  <<<<<<<<");
+        masterDevice=true
+        
+      }
       connectedClients.push(client.id)
     
           })
@@ -51,6 +62,12 @@ module.exports={
     
     aedes.on("clientDisconnect", async function (client) {
       console.log(`Client Disconnected:  ${client.id}`);
+      if(client.id==="hi" )
+      {
+        console.log(">>>>>>>>>>>>    Master Device CONNECTED  <<<<<<<<");
+        masterDevice=false
+        
+      }
       let  v=connectedClients.indexOf(client.id)
       connectedClients.splice(`${v}`)
       console.log('Connected Clients  :::::   '+connectedClients);
