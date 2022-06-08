@@ -21,6 +21,7 @@ module.exports={
                 console.log('Secondary key published to device ON default Topic');
                 client.end()
                 console.log(secKey);
+                console.log(defaultTopic);
                 
        
           });
@@ -30,7 +31,7 @@ module.exports={
     {
         return new Promise(async(resolve,reject)=>{
             let secondaryKey=await db.get().collection(collection.USER_CREADATIONALS).findOne({_id:objectId(userId)})
-            let topic=secondaryKey.secondary_key
+            let topic=secondaryKey.secondary_key_publish
             await db.get().collection(collection.UART_SUBSCRIPTIONS).findOne({userID:userId}).then((res)=>
             {   
                 let count='uArt_3 '+res.uartMode.length
@@ -73,7 +74,7 @@ module.exports={
     {
         return new Promise(async(resolve,reject)=>{
             let secondaryKey=await db.get().collection(collection.USER_CREADATIONALS).findOne({_id:objectId(userId)})
-            let topic=secondaryKey.secondary_key
+            let topic=secondaryKey.secondary_key_publish
             data='Pmode '+`${data[0]} `+`${data[1]} `+`${data[2]} `+`${data[3]} `+`${data[4]}`
          
                 

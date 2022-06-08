@@ -17,6 +17,8 @@ const port = 1883;
 
 
 
+
+
    //__________________________S U P P O R T E R S____________________________________________
   ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// //////
   ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// //////
@@ -71,6 +73,9 @@ const port = 1883;
   ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// ////// //////
   module.exports=
   {
+  
+
+
 
     lifeTimeSubscriber:()=>
           {
@@ -86,57 +91,40 @@ const port = 1883;
 
           client.on("connect", async function () {
        
-            //  let topic= await userHelpers.getAllSecKeys()
-            //  console.log(topic.catchKeysIds);
-            //  console.log(topic.finalKeys);
-            // client.subscribe(topic.finalKeys);
+             let topic= await userHelpers.getAllSecKeys()
 
+ 
+            client.subscribe(topic.finalKeys);
+       
             //for testing mqtt capacity and speed
          
             const array=[]
 
 
-            for (let index = 0; index < 100000; index++) 
 
-            {
-              let temp= index.toString()
-               array.push(temp);
-    
-            }
-                console.log(array);
-                client.subscribe(array);
                 });
 
           client.on("message", function (topic, message)
            {
-            // for testing
-
-             let obj={
-               Topic:topic,
-               MES: message.toString()
-             }
-             adminHelpers.testing(obj).then((res)=>{
-               console.log('done');
-             })
          
-  
-            //
             console.log("TOPIC ::"+topic);
             context = message.toString();
             console.log("MESSAGE ::"+context)
+            console.log(typeof context);
 
  ////////////////////////////  //  _________Process after recieving a message________ //////////////////////////////////////////
 
 
  // KEY CONFORMATION
-          if(context==='krs')
+
+          if( context==='krs' )
           {
             console.log('Conformation recieved ');
           
             return new Promise(async(resolve,reject)=>
             {
            
-              db.get().collection(collection.USER_CREADATIONALS).updateOne({"secondary_key":topic},
+              db.get().collection(collection.USER_CREADATIONALS).updateOne({"secondary_key_subscribe":topic},
               {
                   $set:{
                       "firstConnect":true
@@ -149,6 +137,8 @@ const port = 1883;
           })
         
           }
+
+         
 
           else if(broker.masterDeviceStatus()===true)
           {
@@ -175,27 +165,17 @@ const port = 1883;
             })
           }
 
- //catching
-else if(context==='catch')
-{
-
-}
-
+ 
           else
           {
-             console.log('Data recieved');
+            console.log("nn 1");
+             
               return new Promise(async(resolve,reject)=>{
-                let user=await db.get().collection(collection.USER_CREADATIONALS).findOne({secondary_key:topic})
+                let user=await db.get().collection(collection.USER_CREADATIONALS).findOne({secondary_key_subscribe:topic})
                 let userId=user._id.toString()
-                if(context==='"pro"'|| context==='"uart"')
-                {
-                  console.log('Recieved message published from MODE?');
-                  console.log('skipping....');
-                }
-                else
-                {
+               
                   dataAdder(userId,context)
-                }
+                
               
                 
               })

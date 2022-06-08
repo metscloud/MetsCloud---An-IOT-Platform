@@ -7,6 +7,8 @@ var random=require('random')
 const { response } = require('express');
 const { number } = require('keygenerator/lib/keygen');
 var sensorDataProgrammingMode=require('../static-data/sensorData-programmingMode')
+let newD=[]
+exports.newDC =[this.newDC];
 
 
 ////_________________________________ Helpers for user-helpers_________________________________
@@ -43,22 +45,28 @@ module.exports={
             let rnumber=random.int((min = 1000), (max = 9999))
              var secKey=rnumber+generatedKey
              var moveDefaultTopic=await db.get().collection(collection.KEYS).findOne({key:userData.key})
+          
+          
             let obj={
                 email:userData.email,
                 password:userData.password,
                 ph:userData.ph,
                 primary_key:userData.key,
-                secondary_key:secKey,
+                secondary_key_publish:secKey,
+                secondary_key_subscribe:"$sub"+secKey,
                 defaultTopic:moveDefaultTopic.defaultTopic,
                 firstConnect:false,
-                liveMode:'uart'
+                liveMode:'uart',
+                numberOfDevices:1
  
             }
+            newD.push(obj.secondary_key_subscribe)
            obj.password=await bcrypt.hash(obj.password,10)
            console.log('encrypted successfully.....');
             db.get().collection(collection.USER_CREADATIONALS).insertOne(obj).then((data)=>{
                 console.log('user signup details stored to database.');
-                resolve(data)
+                
+                resolve(obj)
             })
         })
     },
@@ -117,7 +125,11 @@ module.exports={
     pickSecondaryKey:(dTopic)=>{
         return new Promise(async(resolve,reject)=>{
             let secondaryKey=await db.get().collection(collection.USER_CREADATIONALS).findOne({defaultTopic:dTopic})
-            resolve(secondaryKey.secondary_key)
+            let keys={
+                secondary_key_publish:secondaryKey.secondary_key_publish,
+                secondary_key_subscribe:secondaryKey.secondary_key_subscribe
+            }
+            resolve(keys)
         })
 
     },
@@ -168,29 +180,22 @@ module.exports={
     },
     getAllSecKeys:()=>{
         return new Promise(async(resolve,reject)=>{
-            let keys=await db.get().collection(collection.USER_CREADATIONALS).find({}).project({_id:0,email:0,password:0,defaultTopic:0,firstConnect:0, primary_key:0,ph:0,}).toArray()
-            let catchKeys=await db.get().collection(collection.CATCHING_KEYS).find({}).project({_id:0}).toArray()
+            let keys=await db.get().collection(collection.USER_CREADATIONALS).find({}).project({_id:0,email:0,password:0,defaultTopic:0,firstConnect:0, primary_key:0,secondary_key_publish:0,ph:0,}).toArray()
+        
             let finalKeys=[]
-            let catchKeysIds=[]
+        
             let length=keys.length
-            let lengthCatchKeys=catchKeys.length
-            for(let j=0; j<=lengthCatchKeys-1;j++)
-            {
-                
-                let temp=catchKeys[j].key
-                catchKeysIds.push(temp)
-                 
-            }
+        
             for(let i=0; i<=length-1;i++)
             {
                 
-                let temp=keys[i].secondary_key
+                let temp=keys[i].secondary_key_subscribe
                 finalKeys.push(temp)
                  
             }
             console.log('####### TOPICS ARE #######');
             console.log(finalKeys);
-            resolve({finalKeys,catchKeysIds})
+            resolve({finalKeys})
         })
 
     },

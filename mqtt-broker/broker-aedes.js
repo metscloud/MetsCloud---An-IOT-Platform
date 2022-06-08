@@ -8,6 +8,13 @@ const aedes = require("aedes")();
 const server = require("net").createServer(aedes.handle);
 const port = 1883;
 const mqtt = require("mqtt");
+const cors=require('cors')
+const socket = require("socket.io")(server);
+const app = require('../app');
+
+
+
+
 
 
 
@@ -37,9 +44,6 @@ module.exports={
   
   
   startBroker:()=>
-  
-
-
 {
 
     
@@ -49,10 +53,12 @@ module.exports={
 
     aedes.on("client",async function (client) {
       console.log(`______Client Connected_____:  ${client.id}`)
+  
       if(client.id==="hi" )
       {
         console.log(">>>>>>>>>>>>    Master Device CONNECTED  <<<<<<<<");
         masterDevice=true
+        
         
       }
       connectedClients.push(client.id)

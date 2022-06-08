@@ -6,9 +6,15 @@ var keygen = require("keygenerator");
 var random=require('random')
 const { response } = require('../app');
 const { number } = require('keygenerator/lib/keygen');
+
+
+
 module.exports={
 
 keyGenarator:()=>{
+ 
+
+    
     return new Promise(async(resolve,reject)=>{
         chars: true
         sticks: false
@@ -31,8 +37,9 @@ keyGenarator:()=>{
         key:rnumber+generatedKey,
          defaultTopic:defaultTopic
     }
-      await db.get().collection(collection.KEYS).insertOne(obj).then((response)=>{
-          resolve(response)
+     let g= await db.get().collection(collection.KEYS).insertOne(obj).then((response)=>{
+        resolve(response);
+    
       })
     })
 

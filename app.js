@@ -13,9 +13,27 @@ var storeRouter=require('./routes/store')
 var broker=require('./mqtt-broker/broker-aedes')
 var subscribe=require('./mqtt-clients/subscribe')
 var fileUpload=require('express-fileupload');
+
+var connectedSocketClients=[]
+var userIds=[]
+
+
+const cors=require('cors')
+const socket = require("socket.io");
+const io = socket(3002,{ 
+  cors: {
+  origin: "http://localhost:3001",
+  methods: ["GET", "POST"]
+}});
+
+
 const userHelpers = require('./helpers/user-helpers');
 
 var app = express();
+
+
+
+
 
 // view engine setup
 console.log('________________________________________________________ SEVER UP ON port:3000________________________________________________________');
@@ -28,6 +46,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({secret:"key",cookie:{maxAge:600000}}))
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors())
 
 db.connect((err)=>{
   if(err) console.log('connection failed'+err);
@@ -37,7 +56,84 @@ db.connect((err)=>{
 broker.startBroker()
 subscribe.lifeTimeSubscriber()
 
+//Sockets..........................................
 
+// socketServer.startSocketServer()
+
+
+
+//
+function userCreator(socketIds,client){
+  let socketUsers=[]
+  for (let i = 0; i < socketIds.length; i++) 
+  {
+    let user ={
+      socketId:socketIds[i],
+      clientId:client[i]
+
+    } 
+    socketUsers.push(user)
+    
+  }
+  return socketUsers
+ 
+}
+
+
+
+io.on("connection", (socket) =>
+{
+// send a message to the client
+console.log(' user connected '+socket.id);
+
+connectedSocketClients.push(socket.id)
+console.log(connectedSocketClients);
+socket.emit('fromServer',"success")
+
+socket.on('join',(data)=>{
+  console.log(data);
+  userIds.push(data.userId)
+  console.log(userIds);
+  let a=userCreator(connectedSocketClients,userIds)
+  console.log("SOCKET USERS");
+  console.log(a);
+
+})
+
+
+
+socket.on('disconnect', function(socket)
+{
+console.log( socket.id);
+let  v=connectedSocketClients.indexOf(socket.id)
+console.log(v);
+connectedSocketClients.splice(`${v}`)
+console.log(connectedSocketClients);
+})
+
+socket.on('message', function(msg)
+{
+console.log(msg)
+   setInterval(async()=>{
+       let s=random.int((min = 0), (max = 10)) 
+      let ms=await db.get().collection(collection.KEYS).find().toArray()
+       console.log(ms[s].key);
+               socket.emit('fromServer', ms[s].key+"llll")
+
+   }, 1000);
+
+})
+
+
+})
+
+//
+
+
+app.use(function(req, res, next) {
+  req.io = io;
+  next();
+});
 app.use('/', userRouter);
 app.use('/admin', adminRouter)
 app.use('/blog', blogRouter);
@@ -59,5 +155,9 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
+
+
 
 module.exports = app;
