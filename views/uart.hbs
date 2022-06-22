@@ -3,7 +3,7 @@
   <div class="form-group">
     <label for="exampleFormControlSelect1">Select Parameter</label>
     <select class="form-control" id="exampleFormControlSelect1" name="parameter">
-      <option>Temperature</option>
+      <option>Tempe</option>
       <option>Humidity</option>
       <option>Power</option>
       <option>Status</option>
@@ -14,6 +14,18 @@
       <option>Pressure</option>
     </select>
   </div>
+
+
+
+  <div class="form-group">
+    <label for="exampleFormControlSelect1">Select Device</label>
+    <select class="form-control" id="exampleFormControlSelect1" name="device">
+      {{#each data.deviceNames}}
+      <option>{{this}}</option>
+      {{/each}}
+     
+    </select>
+  </div>
  
   <div class="form-group">
     <label for="exampleFormControlTextarea1">Nick name</label>
@@ -21,6 +33,10 @@
   </div>
    <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+
+
+
+
 <table class="table table-dark">
   <thead>
     <tr>
@@ -43,3 +59,11 @@
     {{/each}}
   </tbody>
 </table>
+
+
+
+
+
+
+
+

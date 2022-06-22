@@ -1,1 +1,3 @@
-<center><a href="/connect/{{data.dtopic}}" class="btn btn-success">Connect to Server</a></center>
+{{#each data.dtopic}}
+<center><a href="/connect/{{this}}" class="btn btn-success">Connect to Server</a></center>
+{{/each}}

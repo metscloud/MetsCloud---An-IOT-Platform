@@ -117,7 +117,7 @@ const port = 1883;
 
  // KEY CONFORMATION
 
-          if( context==='krs' )
+          if( context===2 )
           {
             console.log('Conformation recieved ');
           
@@ -172,7 +172,11 @@ const port = 1883;
              
               return new Promise(async(resolve,reject)=>{
                 let user=await db.get().collection(collection.USER_CREADATIONALS).findOne({secondary_key_subscribe:topic})
+              
                 let userId=user._id.toString()
+                let primaryKey=await userHelpers.connecter("sec_sub",topic,userId)
+                // primaryKey.primary_key
+
                
                   dataAdder(userId,context)
                 

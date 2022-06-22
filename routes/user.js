@@ -9,6 +9,7 @@ var publish=require('../mqtt-clients/publish')
 var sensorDataUart=require('../static-data/sensorData-uart')
 var sensorDataProgrammingMode=require('../static-data/sensorData-programmingMode')
 const socket = require("socket.io");
+const async = require('hbs/lib/async');
 
 const verifyLogin=(req,res,next)=>{
   if(req.session.loggedIn){
@@ -64,7 +65,7 @@ router.post('/signup',(req,res)=>{
         userHelpers.keyDeleter(req.body.key)
         console.log('key deleted');
         console.log(obj);
-        subscribe.signupSubscriber(obj.secondary_key_subscribe)
+        
         res.redirect('/')
       })
     }
@@ -107,12 +108,15 @@ router.get('/login',(req,res)=>{
           firstConnect=false
         }
 
+        console.log("++++++++++++++++++++++++++++++++==========>>>>>");
         console.log(response.user);
         let data=
         {
           email:response.user.email,
           dtopic:response.user.defaultTopic,
           liveMode:response.user.liveMode,
+          deviceNames:response.user.deviceNames,
+          deviceId:response.user.primary_key
         }
         console.log(data);
 
@@ -122,13 +126,17 @@ router.get('/login',(req,res)=>{
           uartStatus=true
           console.log(uartStatus);
           console.log(req.session.user._id);
-          let a=req.session.user._id     
-           await userHelpers.getUartSubscribtions(objectId(a).toString()).then((response)=>
+          let a=req.session.user._id    
+         await  userHelpers.getDevices(req.session.user._id).then(async(devices)=>{
+            console.log("=============>"+devices); 
+           await userHelpers.getUartSubscribtions(objectId(a).toString(),devices).then((response)=>
           {
          
             if(response)
             { 
-               dataUart=response.uartMode
+              console.log(">>>>>>");
+              console.log(response);
+               dataUart=response[0]
                console.log(dataUart);
         
             }
@@ -138,6 +146,7 @@ router.get('/login',(req,res)=>{
               
             }
             })
+          })
 
 
         }
@@ -150,6 +159,8 @@ router.get('/login',(req,res)=>{
           option5=await userHelpers.settingPinToOptions('5')
           
         }
+        console.log(data);
+
         res.render('account',{data,firstConnect,uartStatus,dataUart,option1,option2,option3,option4,option5})
         var io = req.io;
         console.log(socket.id);
@@ -165,48 +176,83 @@ router.get('/login',(req,res)=>{
     })
   })
   router.get('/connect/:id',(req,res)=>{
-    userHelpers.pickSecondaryKey(req.params.id).then((secKey)=>{
-      publish.publishSecondaryKeyToDevice(req.params.id,secKey)
+    userHelpers.connecter("dt",req.params.id,req.session.user._id).then((res)=>{
+      console.log(res);
+
+   
+    // userHelpers.pickSecondaryKey(req.params.id).then((secKey)=>{
+      publish.publishSecondaryKeyToDevice(req.params.id,res.secondary_key_publish)
 
       
-      })
+      // })
+    })
  
  
   
   })
 
   router.get('/uart',(req,res)=>{
-    userHelpers.getUartSubscribtions(req.session.user._id).then((response)=>{
-    if(response)
-    { 
-      let data=response.uartMode
-      res.render('uart',{data})
-    }else{
-      res.render('uart')
-    }
+     userHelpers.getDevices(req.session.user._id).then((devices)=>{
+       console.log(devices);
+    
+      userHelpers.getUartSubscribtions(req.session.user._id,devices).then((response)=>{
+      
+        if(response)
+        { 
+          let data=response.uartMode
+          res.render('uart',{data})
+        }else{
+          res.render('uart')
+        }
+        })
+      })
+
+     })
+    
+  router.get('/add-device',(req,res)=>{
+    res.render('add-device')
+
+  })
+  router.post ('/add-device',(req,res)=>{
+    console.log(req.body);
+    userHelpers.keyValidator(req.body.serialNo,).then(async(status)=>{
+      if(status.status)
+      {
+         await userHelpers.deviceUpdater(req.session.user._id,req.body).then((res)=>{
+          
+        })
+     
+
+      }
+      else
+      {
+        console.log("no such device");
+      }
     })
+
   })
 
   router.post('/uart-submit',async(req,res)=>{
     let urtParameter=req.body
-     await userHelpers.uartAndProgrammingModeStore(req.session.user._id,urtParameter)
+     await userHelpers.uartAndProgrammingModeStore(req.session.user._id,urtParameter,urtParameter.device)
      publish.publishCountToDevice(req.session.user._id).then((status)=>{
-      res.redirect(req.get('referer'));
+      res.redirect('/uart');
      })
    
   })
-  router.get('/uart-delete-parameter/:id',async(req,res)=>{
+  router.get('/uart-delete-parameter/:id/:deviceId',async(req,res)=>{
     console.log(req.params.id);
-   await userHelpers.deleteUartParameter(req.session.user._id,req.params.id)
-   publish.publishCountToDevice(req.session.user._id).then((status)=>{
+   await userHelpers.deleteUartParameter(req.session.user._id,req.params.id,req.params.deviceId)
+   publish.publishCountToDevice(req.session.user._id,req.params.deviceId).then((status)=>{
     res.redirect('/uart')
   })
  
   
   })
-  router.get('/uart-view-parameter/:id',(req,res)=>{
+  router.get('/uart-view-parameter/:id/:deviceId',(req,res)=>{
     console.log(req.params.id);
-    userHelpers.getValues(req.session.user._id,req.params.id).then((response)=>{
+    console.log(req.params.deviceId);
+    userHelpers.getValues(req.session.user._id,req.params.id,req.params.deviceId).then((response)=>{
     console.log(response);
     if(response)
     {
