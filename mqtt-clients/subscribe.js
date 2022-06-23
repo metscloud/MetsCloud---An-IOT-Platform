@@ -92,9 +92,10 @@ const port = 1883;
           client.on("connect", async function () {
        
              let topic= await userHelpers.getAllSecKeys()
+             
 
  
-            client.subscribe(topic.finalKeys);
+            client.subscribe(topic);
        
             //for testing mqtt capacity and speed
          
@@ -117,7 +118,7 @@ const port = 1883;
 
  // KEY CONFORMATION
 
-          if( context===2 )
+          if( context==='krs' )
           {
             console.log('Conformation recieved ');
           

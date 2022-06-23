@@ -16,6 +16,7 @@ module.exports={
     SENSORS:'sensors',
     CATCHING_KEYS:'catchingKeys',
     CONNECTED_CLIENTS:'connectedClients',
+    SUB_TOPICS:'subscribeTopics',
 
     //for testing mqtt capacity and speed
     TESTING:'testing',

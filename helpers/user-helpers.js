@@ -79,6 +79,10 @@ module.exports={
                 pinsUsed:[0]
  
             }
+            let objSec={
+                secondary_key_subscribe:"$sub"+secKey,
+
+            }
          
             newD.push(obj.secondary_key_subscribe)
            obj.password=await bcrypt.hash(obj.password,10)
@@ -87,6 +91,11 @@ module.exports={
                 console.log('user signup details stored to database.');
                 
                 resolve(obj)
+            })
+            db.get().collection(collection.SUB_TOPICS).insertOne(objSec).then((data)=>{
+                console.log('added to subscribe topics');
+                
+                resolve(objSec)
             })
         })
     },
@@ -247,32 +256,54 @@ module.exports={
     },
     getAllSecKeys:()=>{
         return new Promise(async(resolve,reject)=>{
-            let keys=await db.get().collection(collection.USER_CREADATIONALS).find({}).project({_id:0,email:0,password:0,defaultTopic:0,firstConnect:0, primary_key:0,secondary_key_publish:0,ph:0,}).toArray()
+            let keys=await db.get().collection(collection.SUB_TOPICS).find({}).toArray()
+            // console.log(keys);
+            let keysToSubscribe=[]
+            for(let i=0;i<=keys.length-1;i++)
+            {
+                let data=keys[i].secondary_key_subscribe
+                keysToSubscribe.push(data)
+
+
+            }
+            console.log("");
+            console.log("");
+            console.log("                        >>>>>>>>>      T    O    P    I   C   S        <<<<<<<<<<<<  " );
+            console.log("");
+            console.log("");
+            console.log("                                              No.of topics :   "+keysToSubscribe.length +"                                    ");
+            console.log("");
+             for (let index = 0; index < keysToSubscribe.length; index++) {
+               console.log(keysToSubscribe[index]);
+               
+             }
         
-            let finalKeys=[]
-            let fixedFinal=[]
-            let length=keys.length
-            for(let i=0; i<=length-1;i++)
-            {
+            // let finalKeys=[]
+            // let fixedFinal=[]
+            // let length=keys.length
+            // for(let i=0; i<=length-1;i++)
+            // {
                 
-                let temp=keys[i].secondary_key_subscribe
-                console.log(temp);
-                finalKeys.push(temp)
+            //     let temp=keys[i].secondary_key_subscribe
+            //     console.log(temp);
+            //     finalKeys.push(temp)
                  
-            }
-            console.log('####### TOPICS ARE #######');
-            for(let j=0;j<=finalKeys.length-1;j++)
-            {
-                let array=finalKeys[j]
-                for(k=0;k<=array.length-1;k++)
-                {
-                    fixedFinal.push(array[k])
-                }
+            // }
+            // console.log('####### TOPICS ARE #######');
+            // for(let j=0;j<=finalKeys.length-1;j++)
+            // {
+            //     let array=finalKeys[j]
+            //     for(k=0;k<=array.length-1;k++)
+            //     {
+            //         fixedFinal.push(array[k])
+            //     }
 
 
-            }
-            console.log(fixedFinal);
-            resolve({fixedFinal})
+            // }
+            // console.log(fixedFinal);
+            // resolve({fixedFinal)
+
+            resolve(keysToSubscribe)
         })
 
     },
