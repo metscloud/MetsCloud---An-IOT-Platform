@@ -10,6 +10,16 @@ var sensorDataUart=require('../static-data/sensorData-uart')
 var sensorDataProgrammingMode=require('../static-data/sensorData-programmingMode')
 const socket = require("socket.io");
 const async = require('hbs/lib/async');
+const notificationPusher = require('../helpers/notificationPusher');
+const ad=require('../test');
+const iiotUserHelpers = require('../helpers/iiot-user-helpers');
+const collections = require('../config/collections');
+var path=require('path')
+const mongodb=require('mongodb')
+const binary=mongodb.Binary
+
+ 
+
 
 const verifyLogin=(req,res,next)=>{
   if(req.session.loggedIn){
@@ -32,12 +42,15 @@ router.post('/generatekey',(req,res)=>{
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+    
+    ad.sendNotification()
 
-    var io = req.io;
+    // var io = req.io;
 
-    io.emit('fromServer', 'reloaded');
+    // io.emit('fromServer', 'reloaded');
 
   res.render('index',{admin:false});
+  // res.download(path.resolve('./README.md'))
 
 });
 // router.get('/:id', (req, res)=> {
@@ -65,6 +78,7 @@ router.post('/signup',(req,res)=>{
         userHelpers.keyDeleter(req.body.key)
         console.log('key deleted');
         console.log(obj);
+        notificationPusher.sentEmail(req.body.email,"Welcome to Mets Cloud","Thank you for signing up...Have a nice experience")
         
         res.redirect('/')
       })
@@ -84,6 +98,7 @@ router.get('/login',(req,res)=>{
   router.post('/login',async(req,res)=>{
     console.log('submitting login page requestes...');
     console.log(req.body);
+
     userHelpers.doLogin(req.body).then(async(response)=>{
       let uartStatus=false
       let dataUart
@@ -308,6 +323,7 @@ router.get('/login',(req,res)=>{
   })
   router.post('/pro-submit',async(req,res)=>
   {
+    console.log(req.body);
     let data=req.body
      arrayData=[]
      console.log(typeof data.parameter1);
@@ -378,7 +394,7 @@ router.get('/login',(req,res)=>{
       arrayData.push(pin)
     }
     console.log(arrayData);
-    userHelpers.secondaryKeyTaker(req.session.user._id).then((secKey)=>{
+    userHelpers.secondaryKeyTaker(req.params.deviceId,req.session.user._id).then((secKey)=>{
       console.log(secKey);
       let pin1=false
       let led1=false
@@ -591,6 +607,87 @@ router.get('/login',(req,res)=>{
     })
   
     
+
+
+
+
+    ///////////////            I       I       O      T          /////////////
+    ///////////////            I       I       O      T          /////////////
+    ///////////////            I       I       O      T          /////////////
+    ///////////////            I       I       O      T          /////////////
+    ///////////////            I       I       O      T          /////////////
+    ///////////////            I       I       O      T          /////////////
+    ///////////////            I       I       O      T          /////////////
+    ///////////////            I       I       O      T          /////////////
+    ///////////////            I       I       O      T          /////////////
+    ///////////////            I       I       O      T          /////////////
+    ///////////////            I       I       O      T          /////////////
+    ///////////////            I       I       O      T          /////////////
+
+
+// check the get and post methods in iiot page.For tesing purpose it is made as get. [ACTUALLY IT IS POST CHANGE IT ]
+
+
+    router.get("/iiotBusinessSignup",(req,res)=>{
+      iiotUserHelpers.signUpBusinessOwner()
+
+    })
+    
+    router.get("/create-token",(req,res)=>{
+      iiotUserHelpers.createToken('businessOwner','bimalboby007@gmail.com','62c0444b41fade43721b038b','supervisor')
+
+    })
+
+    router.get("/iiotAdd-employee",(req,res)=>{
+      iiotUserHelpers.addNewEmployee('businessOwner','supervisor')
+
+    })
+    router.get("/iiot-add-device",(req,res)=>{
+      iiotUserHelpers.addDevice('62c0444b41fade43721b038b','businessOwner')
+
+    })
+    router.get("/iiot-add-sensor",(req,res)=>{
+      iiotUserHelpers.addSensor('62c0444b41fade43721b038b','asdd','businessOwner',10,collections.CART_COLLECTION)
+
+    })
+    router.get("/iiot-share-chart",(req,res)=>{
+      iiotUserHelpers.shareChart('bZ6CUEFF','asdd','supervisor','62c0458ba848c5290546da52')
+
+    })
+
+    router.get("/iiot-shared-charts-load",(req,res)=>{
+      iiotUserHelpers.loadDataFromSharedChart('62c0458ba848c5290546da52','supervisor')
+
+    })
+    router.get("/up",(req,res)=>{
+    res.render('uploadTest')
+
+    })
+    router.post("/upload",(req,res)=>{
+    console.log(req.files.uploadedFile.data);
+    let file = { name: req.body.name, file: binary(req.files.uploadedFile.data) }
+    iiotUserHelpers.storeReport(file)
+      })
+  
+
+
+router.get('/pdfCreate',(req,res)=>{
+let date=Date.now()
+let name=date.toString()
+console.log(name);
+// pass date  as the name then function creates the pdf in the name of that and stores it then download using the name
+iiotUserHelpers.createPdf().then((data)=>{
+  console.log(data);
+
+  res.download(data)
+  let file = { name: 'report', file: binary(data) }
+  iiotUserHelpers.storeReport(file)
+})
+
+
+})
+     
+
 
 
   

@@ -18,11 +18,20 @@ module.exports={
     CONNECTED_CLIENTS:'connectedClients',
     SUB_TOPICS:'subscribeTopics',
 
-    //for testing mqtt capacity and speed
-    TESTING:'testing',
-    // USER_CREADATIONALS:'userCreadationals'
 
 
+    // IIOT PAGE
+    IIOT_BUSINESS_OWNER:'iiotBusinessOwners',
+    IIOT_PROJECT_MANAGER:'iiotProjectManager',
+    ACCESS_CONTROL:'accessControl',
+    IIOT_SUPERVISOR:'supervisor',
+    MQTT_KEYS:'mqttKeys',
+    CHART_DATA_IIOT:'cart',
+    STORE_PDF:'storepdf'
+
+    
+
+  
 
 
 }

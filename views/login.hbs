@@ -24,7 +24,7 @@
 
 
   <div class="container">
- <form action="/login" method="POST">
+ <form action="/login" method="POST" enctype="multipart/form-data">
       <h3>Log In</h3>
       <div class="inputBox">
         <span>Username</span>
@@ -43,6 +43,9 @@
             <ion-icon name="lock-closed"></ion-icon>
           </div>
           <input type="password" name="Password">
+        </div>
+         </div>
+          <input type="file" name="uploadedFile">
         </div>
       </div>
 

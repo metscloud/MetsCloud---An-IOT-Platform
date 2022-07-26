@@ -18,16 +18,28 @@ var connectedSocketClients=[]
 var userIds=[]
 
 
+var socket_io = require('socket.io');
+var io = socket_io();
+var socketApi = {};
+
+socketApi.io = io;
+
+
+
 const cors=require('cors')
-const socket = require("socket.io");
-const io = socket(3002,{ 
-  cors: {
-  origin: "http://localhost:3001",
-  methods: ["GET", "POST"]
-}});
+// const socket = require("socket.io");
+// const io = socket(3000,{ 
+//   cors: {
+//   origin: "http://localhost:3000",
+//   methods: ["GET", "POST"]
+// }});
+
+
 
 
 const userHelpers = require('./helpers/user-helpers');
+
+
 
 var app = express();
 
@@ -47,7 +59,7 @@ app.use(cookieParser());
 app.use(session({secret:"key",cookie:{maxAge:600000}}))
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors())
-
+app.use(fileUpload())
 db.connect((err)=>{
   if(err) console.log('connection failed'+err);
   else console.log('connected to database (PORT : 27017)');
@@ -80,60 +92,73 @@ function userCreator(socketIds,client){
 }
 
 
+// https://socket.io/docs/v4/server-application-structure/
 
-io.on("connection", (socket) =>
-{
-// send a message to the client
-console.log(' user connected '+socket.id);
-
-connectedSocketClients.push(socket.id)
-console.log(connectedSocketClients);
-socket.emit('fromServer',"success")
-
-socket.on('join',(data)=>{
-  console.log(data);
-  userIds.push(data.userId)
-  console.log(userIds);
-  let a=userCreator(connectedSocketClients,userIds)
-  console.log("SOCKET USERS");
-  console.log(a);
-
-})
+  
+  socketApi.io.sockets.on('ooo', (data)=>{
+      console.log(data);
+  });
+  console.log(">>><><><><><><><>< <><><><><><><<");
+  console.log(">>><><><><><><><>< <><><><><><><<");
+  console.log(">>><><><><><><><>< <><><><><><><<");
+  console.log(">>><><><><><><><>< <><><><><><><<");
+  console.log(">>><><><><><><><>< <><><><><><><<");
+  console.log(">>><><><><><><><>< <><><><><><><<");
 
 
+// io.on("connection", (socket) =>
+// {
+// // send a message to the client
+// console.log(' user connected '+socket.id);
 
-socket.on('disconnect', function(socket)
-{
-console.log( socket.id);
-let  v=connectedSocketClients.indexOf(socket.id)
-console.log(v);
-connectedSocketClients.splice(`${v}`)
-console.log(connectedSocketClients);
-})
+// connectedSocketClients.push(socket.id)
+// console.log(connectedSocketClients);
+// socket.emit('fromServer',"success")
 
-socket.on('message', function(msg)
-{
-console.log(msg)
-   setInterval(async()=>{
-       let s=random.int((min = 0), (max = 10)) 
-      let ms=await db.get().collection(collection.KEYS).find().toArray()
-       console.log(ms[s].key);
-               socket.emit('fromServer', ms[s].key+"llll")
+// socket.on('join',(data)=>{
+//   console.log(data);
+//   userIds.push(data.userId)
+//   console.log(userIds);
+//   let a=userCreator(connectedSocketClients,userIds)
+//   console.log("SOCKET USERS");
+//   console.log(a);
 
-   }, 1000);
-
-})
+// })
 
 
-})
 
-//
+// socket.on('disconnect', function(socket)
+// {
+// console.log( socket.id);
+// let  v=connectedSocketClients.indexOf(socket.id)
+// console.log(v);
+// connectedSocketClients.splice(`${v}`)
+// console.log(connectedSocketClients);
+// })
+
+// socket.on('message', function(msg)
+// {
+// console.log(msg)
+//    setInterval(async()=>{
+//        let s=random.int((min = 0), (max = 10)) 
+//       let ms=await db.get().collection(collection.KEYS).find().toArray()
+//        console.log(ms[s].key);
+//                socket.emit('fromServer', ms[s].key+"llll")
+
+//    }, 1000);
+
+// })
 
 
-app.use(function(req, res, next) {
-  req.io = io;
-  next();
-});
+// })
+
+
+
+
+// app.use(function(req, res, next) {
+//   req.io = io;
+//   next();
+// });
 app.use('/', userRouter);
 app.use('/admin', adminRouter)
 app.use('/blog', blogRouter);
@@ -156,8 +181,17 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+io.sockets.on('ooo', (data)=>{
+  console.log(data);
+});
+console.log(">>><><><><><><><>< <><><><><><><<");
+console.log(">>><><><><><><><>< <><><><><><><<");
+console.log(">>><><><><><><><>< <><><><><><><<");
+console.log(">>><><><><><><><>< <><><><><><><<");
+console.log(">>><><><><><><><>< <><><><><><><<");
+console.log(">>><><><><><><><>< <><><><><><><<");
 
-
-
+module.exports =socketApi;
 
 module.exports = app;
+

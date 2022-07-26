@@ -10,6 +10,7 @@ var sensorDataProgrammingMode=require('../static-data/sensorData-programmingMode
 const async = require('hbs/lib/async');
 const userHelpers=require('../helpers/user-helpers')
 const connector=require('./connectorForUserData')
+var mqttKeyStore=require('../helpers/mqttKeysStore')
 let newD=[]
 exports.newDC =[this.newDC];
 
@@ -92,11 +93,12 @@ module.exports={
                 
                 resolve(obj)
             })
-            db.get().collection(collection.SUB_TOPICS).insertOne(objSec).then((data)=>{
-                console.log('added to subscribe topics');
+            mqttKeyStore.addKeysToCollection(["$sub"+secKey])
+            // db.get().collection(collection.SUB_TOPICS).insertOne(objSec).then((data)=>{
+            //     console.log('added to subscribe topics');
                 
-                resolve(objSec)
-            })
+            //     resolve(objSec)
+            // })
         })
     },
     
@@ -424,11 +426,12 @@ keyTaker:(Name)=>{
         })
 
 },
-secondaryKeyTaker:(id)=>{
+secondaryKeyTaker:(deviceId="2371QhglSxfX",userId)=>{
     return new Promise(async(resolve,reject)=>{
-        await db.get().collection(collection.USER_CREADATIONALS).findOne({_id:objectId(id)}).then((response)=>{
-            resolve(response.secondary_key)
-        })
+        let deviceData= await connector.connecter("deviceId",deviceId,userId)
+        console.log(deviceData);
+        resolve(deviceData.secondary_key_publish)
+       
     })
 },
 
@@ -478,6 +481,7 @@ deviceUpdater:(userId,data)=>{
 
         await db.get().collection(collection.USER_CREADATIONALS).updateMany({_id:objectId(userId)},{ $push: {secondary_key_subscribe: "$sub"+secKey}}).then(async(response)=>{
                 console.log("NEW DEVICE ADDED TO SECONDARY SUBSCRIBE  KEY SET");
+                mqttKeyStore.addKeysToCollection(["$sub"+secKey])
        
 
         await db.get().collection(collection.USER_CREADATIONALS).updateMany({_id:objectId(userId)},{ $push: {firstConnect:false}}).then(async(response)=>{

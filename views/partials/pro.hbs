@@ -3,6 +3,24 @@
 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYOuxzIr9wiqXCmVGeyUwzY9_6HLCr_To-4A&usqp=CAU" width="500px" height="500px">
 </center>
 <form action="/pro-submit" method="POST">
+
+
+{{!-- option 1 --}}
+  <div class="form-group">
+    <label for="exampleFormControlSelect1">Select Parameter</label>
+    <select class="form-control" id="exampleFormControlSelect1" name="parameter1">
+         {{#each option1}}
+         <option>none</option>
+      <option>{{this.name}} </option>
+  
+        {{/each}}
+  
+    </select>
+  </div>
+
+
+
+
 {{!-- option 1 --}}
   <div class="form-group">
     <label for="exampleFormControlSelect1">Select Parameter</label>
