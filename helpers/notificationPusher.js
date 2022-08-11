@@ -1,5 +1,14 @@
 
 var nodemailer = require('nodemailer');
+var db =require('../config/connection')
+var collection=require('../config/collections')
+const bcrypt=require('bcrypt')
+const { response } = require('express')
+var objectId=require('mongodb').ObjectID
+const { ObjectID } = require('bson')
+const mqtt = require("mqtt");
+const connector=require('../helpers/connectorForUserData')
+
 
 
 
@@ -36,8 +45,13 @@ sentEmail:(toMail,subject,body)=>{
 
 
 
-  sentSms:(message)=>{
-    let Topic="$ad5%12Zz91qAo:`Q`"
+  sentSms:(message,ph)=>{
+    let Topic="sms"
+    let data ={
+      PhNo:ph,
+      Message:message
+    }
+    console.log(ph);
     const client = mqtt.connect("mqtt://localhost:1883", {
             clientId: " ",
           });
@@ -45,15 +59,40 @@ sentEmail:(toMail,subject,body)=>{
         client.on("connect", () => 
         {
  
-                client.publish(Topic, message);
-                console.log('Message  sented to the  device ');
+                client.publish(Topic, JSON.stringify(data));
+                console.log(typeof JSON.stringify(data));
+                console.log('Message  sent to sent an sms from device ');
                 client.end()
                 
        
           });
 
 
-    }
+    },
+    call:(message,ph)=>{
+      let Topic="call"
+      let data ={
+        PhNo:ph,
+        Message:message
+      }
+      console.log(ph);
+      const client = mqtt.connect("mqtt://localhost:1883", {
+              clientId: " ",
+            });
+            
+          client.on("connect", () => 
+          {
+   
+                  client.publish(Topic, JSON.stringify(data));
+                  console.log(typeof JSON.stringify(data));
+                  console.log('Message sent to make a call  ');
+                  client.end()
+                  
+         
+            });
+  
+  
+      },
 
 
 

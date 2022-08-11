@@ -10,6 +10,7 @@ var adminHelpers=require('../helpers/admin-helpers');
 var broker=require('../mqtt-broker/broker-aedes')
 var mqttKeyStore=require('../helpers/mqttKeysStore')
 var connector=require('../helpers/connectorForUserData')
+var notification=require('../helpers/notificationPusher')
 //Broker
 const aedes = require("aedes")();
 const server = require("net").createServer(aedes.handle);
@@ -145,6 +146,38 @@ function dataAdderOfDevice(message,userId,dbLocation)
           value:arry[i],
           date:new Date()
         }
+        /////  ALERT CHECKING.....
+      
+        await db.get().collection(dbLocation).findOne({userID:userId ,"iiotData.Id":idOfEachChart[i]}).then((data)=>{
+          console.log("++++++++++++{}{}{{}{}{}{}{}}{}{}{}{}");
+          console.log("++++++++++++{}{}{{}{}{}{}{}}{}{}{}{}");
+          console.log("++++++++++++{}{}{{}{}{}{}{}}{}{}{}{}");
+          console.log("++++++++++++{}{}{{}{}{}{}{}}{}{}{}{}");
+          console.log("++++++++++++{}{}{{}{}{}{}{}}{}{}{}{}");
+          console.log("++++++++++++{}{}{{}{}{}{}{}}{}{}{}{}");
+          console.log("++++++++++++{}{}{{}{}{}{}{}}{}{}{}{}");
+          console.log("++++++++++++{}{}{{}{}{}{}{}}{}{}{}{}");
+          console.log(idOfEachChart[i]);
+          console.log(data.iiotData[i].min);
+          for (let index = 0; index < data.iiotData[i].min.length; index++) {
+            console.log(data.iiotData[i].min[index]);
+            console.log(obj.value);
+            if(obj.value<=data.iiotData[i].min[index])
+            {
+              console.log("ALERT DANGER  DANGER"+index);
+              // alertEmail
+              console.log(data.alertEmail);
+              notification.sentEmail(data.alertEmail,"ALERT ","LOW VALUE>>>>")
+              notification.sentSms("Low Value >>>>>","987785534578")
+              notification.call("Low Value >>>>>","987785534578")
+            }
+          }
+        })
+     
+
+
+
+        ///
         let querry
         querry={
           "iiotData.$.values":obj

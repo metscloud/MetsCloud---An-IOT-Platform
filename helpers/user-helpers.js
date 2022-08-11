@@ -110,7 +110,7 @@ module.exports={
            let device= await db.get().collection(collection.KEYS).findOne({key:recivedKey})
            if(device)
            {
-               resolve({status:true})
+               resolve({status:true,defaultTopic:device.defaultTopic})
            }else{
                resolve({status:false})
            }

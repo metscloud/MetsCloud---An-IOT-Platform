@@ -27,7 +27,8 @@ module.exports={
     IIOT_SUPERVISOR:'supervisor',
     MQTT_KEYS:'mqttKeys',
     CHART_DATA_IIOT:'cart',
-    STORE_PDF:'storepdf'
+    STORE_PDF:'storepdf',
+    DASHBOARD:'dashboard'
 
     
 

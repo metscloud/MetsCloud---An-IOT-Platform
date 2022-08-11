@@ -15,6 +15,7 @@ const puppeteer = require("puppeteer");
 const fs = require("fs-extra");
  
 const hbs = require("handlebars");
+const { password } = require('keygenerator/lib/keygen')
 ////MAke sure to uncomment all data
 function idSearcher (array,id){
     console.log("______________________   FROM ID SEARCH     ______________________ ");
@@ -32,10 +33,10 @@ function idSearcher (array,id){
     }
 }
 function idSearcherLoadSharedChart (array,id){
-    console.log("______________________   FROM ID SEARCH     ______________________ ");
-    console.log(array)
-    console.log(id);;
-    console.log("______________________ ______________________ ______________________ ");
+    // console.log("______________________   FROM ID SEARCH     ______________________ ");
+    // console.log(array)
+    // console.log(id);;
+    // console.log("______________________ ______________________ ______________________ ");
     for (let i=0;i<=array.length-1;i++)
     {
         
@@ -54,6 +55,11 @@ module.exports={
             
             let rnumber=random.int((min = 1000000), (max = 9999999))
             let accessControlID
+            let aa='123'
+            let pass=await bcrypt.hash(aa,10)
+            let l='testbo@gmail.com'
+         
+
         
             let obj={
                 // nameOfBusiness:data.nameOfBusiness,
@@ -65,16 +71,22 @@ module.exports={
                 // phOfBusiness:data.phOfBusiness,
                 // addressOfBusiness:data.addressOfBusiness,
 
-                // nameOfOwner:data.nameOfOwner,
+                 userName:" George Mathews",
+                 designation:'bo',
+                 organization:'ITC  pvt Ltd',
+
                 // emailOfOwner:data.emailOfOwner,
                 // phOfOwner:data.phOfOwner,
 
                 publicID:rnumber,
+                password:pass,
+                email:l,
                 inviteTokensProjectManager:[],
                 inviteTokensSupervisor:[],
                 projectManager:[],
                 supervisor:[],
                 addedToDashboard:[],
+                chartIds:[],
                 accessLevel:1,
 
 
@@ -98,13 +110,165 @@ module.exports={
            await db.get().collection(collection.ACCESS_CONTROL).insertOne(accessControlObj).then((res)=>{
           console.log("Business Owner signuped successfully");
                 resolve(res)
+
               
              
             })
+            let dash={
+                userName:"null",
+                organization:"null",
+                userId:accessControlID,
+                //bo,pm,sv,d
+                designation:"null",
+                noOfPm:"null",
+                pmImprovement:"null",
+                svImprovement:"null",
+                deviceImprovement:"null",
+                noOfSv:"null",
+                devices:"null",
+                
+
+            }
+          
             
             
         })
         
+
+    },
+    doLogin:(userData,loc)=>{
+        return new Promise(async(resolve,reject)=>{
+            let loginStatus=false
+            let dbLocation
+            let response={}
+
+            if(loc=='businessOwner')
+            {
+                dbLocation=collection.IIOT_BUSINESS_OWNER
+
+            }
+            else if(loc=='projectManager')
+            {
+                dbLocation=collection.IIOT_PROJECT_MANAGER
+
+            }
+            else if(loc=='supervisor')
+            {
+                dbLocation=collection.IIOT_SUPERVISOR
+
+            }
+            else{
+                console.log('ERROR PASSED TO FUNCTION');
+            }
+            console.log('comparing e mail  with the database e mail....');
+            console.log(dbLocation);
+            let user=await db.get().collection(dbLocation).findOne({email:userData.email})
+            
+            if(user){
+                console.log('decrypting the password....');
+                console.log('comparing with database password.....');
+               bcrypt.compare(userData.password,user.password).then((status)=>{
+                    if(status)
+                    {
+                        console.log("login success.....");
+                        response.user=user
+                        response.status=true
+                        response.user=user
+                        resolve(response)
+                    }else{
+                        console.log("login failed....");
+                        resolve({status:false})
+                    }
+                    
+                })
+            }else{
+                console.log("login failed....");
+                resolve({status:false})
+           }
+        })
+    },
+    dashboardData:(id,loc)=>{
+        let dash
+        return new Promise(async(resolve,reject)=>{
+            if(loc==='projectManager')
+            {
+               dbLocation =collection.IIOT_PROJECT_MANAGER
+            }
+            else if(loc==='supervisor')
+            {
+                dbLocation=collection.IIOT_SUPERVISOR
+            }
+            else if(loc==='businessOwner')
+            {
+                dbLocation=collection.IIOT_BUSINESS_OWNER
+
+            }
+            else{
+                console.log("ERROR PASSED TO FUNCTION AS PARAMETER");
+            }
+            await db.get().collection(dbLocation).findOne({ _id:objectId(id)}).then((res)=>{
+                    console.log(res);
+            if(loc==='businessOwner')
+            {
+                 dash={
+                    userName:res.userName,
+                    organization:res.organization,
+                
+                    //bo,pm,sv,d
+                    designation:"bo",
+                    noOfPm:res.projectManager.length,
+                    pmImprovement:"0",
+                    svImprovement:"0",
+                    deviceImprovement:"0",
+                    noOfSv:res.supervisor.length,
+                    devices:res.devices.length,
+                    
+    
+                }
+            }
+            else if(loc==='supervisor')
+            {
+                dash={
+                    userName:res.nameOfSupervisor,
+                    organization:res.organization,
+                
+                    //bo,pm,sv,d
+                    designation:"su",
+                    deviceImprovement:"0",
+                    devices:res.devices.length,
+                    
+    
+                }
+            }
+            else if(loc==='projectManager')
+            {
+                dash={
+                    userName:res.nameOfProjectManager,
+                    organization:res.organization,
+                
+                    //bo,pm,sv,d
+                    designation:"pm",
+               
+                    svImprovement:"0",
+                    deviceImprovement:"0",
+                    noOfSv:res.supervisor.length,
+                    devices:res.devices.length,
+                    
+    
+                }
+       
+
+            }
+            else{
+                console.log("ERROR PASSED TO FUNCTION AS PARAMETER");
+            }
+            console.log(dash);
+                      resolve(dash)
+                    
+                   
+                  })
+
+        })
 
     },
 
@@ -153,8 +317,11 @@ module.exports={
                     $push: querry
                 }
                ).then((data)=>{
-                   console.log(data);
-                resolve(data)
+                   
+                 db.get().collection(dbLocation).findOne({ _id:objectId(userId)}).then((d)=>{
+
+                    resolve({publicId:d.publicID,tokenID:tokenKey})
+                })
   
                 console.log("Token created  by "+tokenBy+" for "+ tokenFor );
               })
@@ -165,14 +332,16 @@ module.exports={
 
 ///////////////??#####???#?#?#?#?#?#?#?#??#?#?!    d  d d d d
 //datas,userId, add this to function parameter
-    addNewEmployee:(addedBy,addedPerson)=>{
+    addNewEmployee:(addedBy,addedPerson,data)=>{
         // here the abouve datas is actually data ....
         // it is givrn like that only for the api testing
-        let data={
-            email:"bimalboby007@gmail.com",
-            token:"9229gKjLaT9X",
-            publicID:8929776
-        }
+        // let data={
+        //     email:"bimalboby007@gmail.com",
+        //     token:"3552uZeFDDEJ",
+        //     publicID:3399359
+        // }
+        console.log("--------");
+        console.log(data);
         let id
        let tockenEmailStatus=false
        let businessPublicIdStatus=false
@@ -198,6 +367,7 @@ module.exports={
        }
        else if(addedBy==='businessOwner' &&  addedPerson==='supervisor')
        {
+       
         higherDbLocation=collection.IIOT_BUSINESS_OWNER
         newDbLocation=collection.IIOT_SUPERVISOR
         dataForm='supervisor'
@@ -233,8 +403,9 @@ module.exports={
            {
             tockenEmailStatus=true
            }
-            
-         let publicID= await db.get().collection(higherDbLocation).findOne({publicID:data.publicID})
+
+         let publicID= await db.get().collection(higherDbLocation).findOne({publicID: parseInt(data.publicid)})
+         
          console.log(publicID);
          if(publicID)
             {
@@ -246,19 +417,26 @@ module.exports={
                 if(dataForm==='supervisor')
                 {
                     obj={
-                        // nameOfSupervisor:data.nameOfSupervisor,
-                        // tockenID:data.tockenID,
-                        // email:data.email,
-                        // ph:data.ph,
-                        // address:data.address,
-                        // businessPublicId:data.businessPublicId,
+                        nameOfSupervisor:data.dname,
+                        
+                        designation:'su',
+                        organization:publicID.organization,
+       
+                    
+                        email:data.email,
+                        password:await bcrypt.hash(data.password,10),
+                        ph:data.phno,
+                        token:data.token,
+                        chartIds:[],
+                   
+                        businessPublicId:parseInt(data.publicid),
     
     
     
                         
                         addedToDashboard:[],
                         accessLevel:3,
-                        publicID:data.publicID,
+                      
 
                         devices:[],
                         numberOfDevices:0,
@@ -271,12 +449,17 @@ module.exports={
                 else if(dataForm==='projectManager')
                 {
                      obj={
-                        // nameOfProjectManager:data.nameOfProjectManager,
-                        // tockenID:data.tockenID,
-                        // email:data.email,
-                        // ph:data.ph,
-                        // address:data.address,
-                        // businessPublicId:data.businessPublicId,
+                        nameOfProjectManager:data.dname,
+                        designation:'pm',
+   
+                        organization:publicID.organization,
+                        email:data.email,
+                        password:await bcrypt.hash(data.password,10),
+                        ph:data.phno,
+                        token:data.token,
+                        chartIds:[],
+                   
+                        businessPublicId:parseInt(data.publicid),
     
     
     
@@ -284,7 +467,7 @@ module.exports={
                         supervisor:[],
                         addedToDashboard:[],
                         accessLevel:2,
-                        publicID:data.publicID,
+                        publicID:parseInt(data.publicid),
 
                        
                         devices:[],
@@ -319,7 +502,7 @@ module.exports={
                        
            await db.get().collection(collection.ACCESS_CONTROL).insertOne(accessControlObj).then((res)=>{
          
-            resolve(res)
+            resolve({res:true})
           
          
         })
@@ -348,7 +531,7 @@ module.exports={
                         }
 
                     }
-                      await db.get().collection(higherDbLocation).updateOne({publicID:data.publicID},
+                      await db.get().collection(higherDbLocation).updateOne({publicID:parseInt(data.publicid)},
                       {
                           $push: querry
                       }
@@ -357,7 +540,7 @@ module.exports={
                         resolve(res)
                         /////
        
-                     db.get().collection(higherDbLocation).updateOne({publicID:data.publicID},deleteQuerry).then((res)=>{
+                     db.get().collection(higherDbLocation).updateOne({publicID:parseInt(data.publicid)},deleteQuerry).then((res)=>{
                             console.log('deleted the token id..');
                             resolve(res)
                             console.log(res);
@@ -372,6 +555,7 @@ module.exports={
 
               }else{
                   console.log("No permission to signUp to this company >>>[  INVALID TOKEN ID OR EMAIL OR COMPANY ID  ]");
+                  resolve(false)
               }
       
             })
@@ -402,7 +586,7 @@ module.exports={
                 iiotData:{$elemMatch:{Id : chartId}}
             }
             let chartData=await db.get().collection(collection.CHART_DATA_IIOT).findOne(querry)
-            console.log(chartData);
+            // console.log(chartData);
             let data={
                 deviceId:chartData.deviceId,
                 chartId:chartId
@@ -415,7 +599,7 @@ module.exports={
                 $push: querryToPushSharedChartData
             }
            ).then((data)=>{
-               console.log(data);
+            //    console.log(data);
             resolve(data)
 
             console.log("Chart of ID: "+chartId+" of the device "+ deviceId+" shared to the "+ shareTo );
@@ -445,14 +629,14 @@ module.exports={
                 console.log("ERROR PASSED TO FUNCTION AS PARAMETER");
             }
       
-           let data= await db.get().collection(dbLocation).findOne({_id:objectId(userId)})
+           let data= await db.get().collection(dbLocation).findOne({_id:objectId(userId)})// search with id and device id 
            let ids=data.sharedCharts
 
            let finalSharedData=[]
            let querry
            let idOfSharedCharts=[]
            let deviceIdOFSharedCharts=[]
-            console.log(ids.length);
+            // console.log(ids.length);
            for(let i=0;i<= ids.length-1;i++)
            {
             querry= {
@@ -461,7 +645,7 @@ module.exports={
                  }
                  idOfSharedCharts.push(ids[i].chartId)
                  deviceIdOFSharedCharts.push(ids[i].deviceId)
-                 console.log(querry);
+                //  console.log(querry);
                  let d= await db.get().collection(collection.CHART_DATA_IIOT).findOne(querry)
                  finalSharedData.push(d)
 
@@ -470,17 +654,17 @@ module.exports={
         for(let i=0;i<=finalSharedData.length-1;i++)
         {
             let a=finalSharedData[i]
-            console.log(a);
-                console.log("___________________");
+            // console.log(a);
+                // console.log("___________________");
                 console.log(a.iiotData[i]);
                 let pos=idSearcherLoadSharedChart(a.iiotData,idOfSharedCharts[i])
-                console.log(a.iiotData[pos]);
+                // console.log(a.iiotData[pos]);
                 final.push(a.iiotData[pos])
 
         }
           console.log("****************************************************************************************************************");
         
-          console.log(final); 
+        //   console.log(final); 
           resolve(finalSharedData)
         })
 
@@ -489,22 +673,33 @@ module.exports={
 
 
 // Make sure to change the datas to the data ...It is for testing api
-    addDevice:(userID,ownedBy)=>{
-        let data={
-            primary_key:'asdd',
-            defaultTopic:"dfs",
-            deviceNames:"dsf",
-
-
-
-
-
-        }
+    addDevice:(userID,ownedBy,d)=>{
+    let data
+       
 
         return new Promise(async(resolve,reject)=>{
             let dbLocation
             // Validity check
-            let validity=await userHelpers.keyValidator(data.key)
+            let validity=await userHelpers.keyValidator(d.sno)
+            console.log(validity);
+            if(validity.status==true){
+
+            
+             data={
+                primary_key:d.sno,
+                defaultTopic:validity.defaultTopic,
+                deviceNames:d.nickname,
+    
+    
+    
+    
+    
+             }
+            }
+            else{
+                resolve({status:"error"})
+                
+            }
             //selecting the collection to insert
             if(ownedBy==='businessOwner')
             {
@@ -555,18 +750,214 @@ module.exports={
             }
            ).then((response)=>{
              console.log('Device added successfully');
-                resolve(response)
+                resolve({status:"success"})
             })
             mqttKeyStore.addKeysToCollection(["$iiot"+secKey])
 
         })
 
     },
+    
+    viewProjectManagers:(id)=>{
+  
+        return new Promise(async(resolve,reject)=>{
+            let data=[]
+            await db.get().collection(collection.IIOT_BUSINESS_OWNER).findOne({ _id:objectId(id)}).then((response)=>{
+             console.log('FOUND...');
+             for(let i=0;i<response.projectManager.length;i++)
+             {
+                console.log(response.projectManager[i].userId);
+                data.push(response.projectManager[i].userId)
+
+             }
+             console.log(data);
+            
+                resolve(data)
+            })
+
+        })
+        
+    },
+    viewSupervisors:(id,pos)=>{
+        let dbLocation
+        if(pos==='businessOwner')
+        {
+            dbLocation=collection.IIOT_BUSINESS_OWNER
+          
+        
+        }
+        else if (pos==='projectManager')
+        {
+            dbLocation=collection.IIOT_PROJECT_MANAGER
+          
+
+        }
+     
+        else{
+            console.log("ERROR IN THE FUNCTION TO ADD THE DEVICE IN IIOT [ CHECK THE FUNCTION PARAMETERS PASSED ]");
+        }
+        return new Promise(async(resolve,reject)=>{
+            let data=[]
+            await db.get().collection(dbLocation).findOne({ _id:objectId(id)}).then((response)=>{
+             console.log('FOUND...');
+             for(let i=0;i<response.supervisor.length;i++)
+             {
+                console.log(response.supervisor[i].userId);
+                data.push(response.supervisor[i].userId)
+
+             }
+
+            
+                resolve(data)
+            })
+
+        })
+        
+    },
+
+    dataOfProjectManagers:(array)=>{
+        return new Promise(async(resolve,reject)=>{
+            let data=[]
+            for(let i=0;i<array.length;i++)
+            {
+           let a= await db.get().collection(collection.IIOT_PROJECT_MANAGER).findOne({ _id:objectId(array[i])})
+           data.push(a)
+            }
+            console.log(data);
+            resolve(data)
+
+        })
+
+
+    },
+    dataOfSupervisors:(array,pos)=>{
+        let dbLocation=collection.IIOT_SUPERVISOR
+        
+        // if(pos==='businessOwner')
+        // {
+        //     dbLocation=collection.IIOT_BUSINESS_OWNER
+          
+        
+        // }
+        // else if (pos==='projectManager')
+        // {
+        //     dbLocation=collection.IIOT_PROJECT_MANAGER
+        //     console.log(dbLocation);
+
+        // }
+     
+        // else{
+        //     console.log("ERROR IN THE FUNCTION TO ADD THE DEVICE IN IIOT [ CHECK THE FUNCTION PARAMETERS PASSED ]");
+        // }
+        return new Promise(async(resolve,reject)=>{
+            let data=[]
+            for(let i=0;i<array.length;i++)
+            {
+           let a= await db.get().collection(dbLocation).findOne({ _id:objectId(array[i])})
+           console.log(a);
+           data.push(a)
+            }
+            console.log(data);
+            resolve(data)
+
+        })
+
+
+    },
+    deviceData:(id,pos)=>{
+        let dbLocation
+
+        if(pos==='businessOwner')
+        {
+            dbLocation=collection.IIOT_BUSINESS_OWNER
+          
+        
+        }
+        else if (pos==='projectManager')
+        {
+            dbLocation=collection.IIOT_PROJECT_MANAGER
+            console.log(dbLocation);
+
+        }
+        else if (pos==='supervisor')
+        {
+            dbLocation=collection.IIOT_SUPERVISOR
+            console.log(dbLocation);
+
+        }
+     
+        else{
+            console.log("ERROR IN THE FUNCTION TO ADD THE DEVICE IN IIOT [ CHECK THE FUNCTION PARAMETERS PASSED ]");
+        }
+  
+        return new Promise(async(resolve,reject)=>{
+            let deviceIds=[]
+            let deviceNames=[]
+            let devices=[]
+            await db.get().collection(dbLocation).findOne({ _id:objectId(id)}).then((response)=>{
+             console.log('FOUND...');
+
+             for(let i=0;i<response.devices.length;i++)
+             {
+                
+                deviceIds.push(response.devices[i].primary_key)
+                deviceNames.push(response.devices[i].deviceNames)
+                devices.push(response.devices[i])
+
+             }
+            
+            
+                resolve({deviceIds,devices,deviceNames})
+            })
+
+        })
+        
+    },
+    dataOfDevices:(array)=>{
+        let dbLocation=collection.CHART_DATA_IIOT
+       console.log(array);
+       console.log(dbLocation);
+        return new Promise(async(resolve,reject)=>{
+            let data=[]
+            for(let i=0;i<array.length;i++)
+            {
+           let a= await db.get().collection(dbLocation).findOne({ deviceId:array[i]})
+
+           data.push(a)
+            }
+
+            resolve(data)
+
+        })
+
+
+    },
+    dataCleanerforChart:(array)=>{
+        for(let i=0;i<array.length;i++)
+        {
+        
+         for(let j=0;j<array[i].iiotData.length;j++)
+         {
+
+            for(let k=0;k<array[i].iiotData[j].values.length;j++)
+            {
+   
+               console.log(array[i].iiotData[j].values[k].value);
+   
+            }
+
+         }
+
+      
+        }
+
+    },
+  
     //add data as a parameter ...for testing it  left as this
-    addSensor:(userId,deviceId,to,max,chartDataStore)=>{
+    addSensor:(userId,deviceId,to,max,chartDataStore,d)=>{
         data={
-            parameter:'ddeeedd',
-            nickname:'e4455'
+            parameter:d.type,
+            nickname:d.nickname
 
         }
         let dbLocation
@@ -636,6 +1027,21 @@ module.exports={
                     $push: { iiotData: obj }
                 }
                ).then((response)=>{
+                console.log(obj.Id+"))))))))))))O");
+                let id={
+                    id:obj.Id,
+                    deviceId:deviceId
+                }
+                db.get().collection(dbLocation).updateOne({ _id:objectId(userId)},
+                    {
+                        $push: { chartIds: id }
+                    }
+                   ).then((res)=>{
+    
+                    
+                 console.log(res);
+                  })
+
                 resolve(response)
               })
               let newValue=deviceData.pinsUsed+1
@@ -677,6 +1083,9 @@ module.exports={
                     Id:id,
                     parameter:data.parameter,
                     nickname:data.nickname,
+                    min:[],
+                    max:[],
+                    alert:false,
                     values:[]
                    }
                 ]
@@ -699,6 +1108,20 @@ module.exports={
                 } 
              })
              .then((response)=>{
+              
+                let i={
+                    id:obj.Id,
+                    deviceId:deviceId
+                }
+                db.get().collection(dbLocation).updateOne({ _id:objectId(userId)},
+                    {
+                        $push: { chartIds: i }
+                    }
+                   ).then((res)=>{
+    
+                    
+                 console.log(res);
+                  })
              resolve(response)
                 console.log(response);
                })
@@ -709,6 +1132,145 @@ module.exports={
         })
     
     },
+    chartData:(id,chartId)=>{
+        return new Promise(async(resolve,reject)=>{
+        let dbLocation=collection.CHART_DATA_IIOT
+    //     console.log("0000000000");
+    //    console.log(id);
+    //    console.log(chartId);
+       console.log("0000000000");
+            await db.get().collection(dbLocation).findOne({userID:id}).then((response)=>{
+                    console.log(response.iiotData);
+                    console.log(chartId);
+                    let pos= idSearcherLoadSharedChart(response.iiotData,chartId)
+                    // console.log("_____#_#_#_#_##");
+                     console.log(response.iiotData[pos]);
+
+              
+
+                 resolve(response.iiotData[pos])
+             })
+         })
+
+    },
+    addToDashboard:(userId,chartId,des)=>{
+        let dbLocation
+        if(des==='businessOwner')
+        {
+            dbLocation=collection.IIOT_BUSINESS_OWNER
+          
+        
+        }
+        else if (des==='projectManager')
+        {
+            dbLocation=collection.IIOT_PROJECT_MANAGER
+         
+
+        }
+        else if (des==='supervisor')
+        {
+            dbLocation=collection.IIOT_SUPERVISOR
+
+        }
+        else{
+            console.log("ERROR IN THE FUNCTION TO ADD THE DEVICE IN IIOT [ CHECK THE FUNCTION PARAMETERS PASSED ]");
+        }
+        return new Promise(async(resolve,reject)=>{
+      
+       
+            await db.get().collection(dbLocation).updateOne({ _id:objectId(userId)},
+            {
+                $push: { addedToDashboard: chartId }
+            }
+           ).then((res)=>{
+                 resolve(res)
+             })
+         })
+
+    },
+    chartIds:(id,des,select)=>{
+        let dbLocation
+        if(des==='businessOwner')
+        {
+            dbLocation=collection.IIOT_BUSINESS_OWNER
+          
+        
+        }
+        else if (des==='projectManager')
+        {
+            dbLocation=collection.IIOT_PROJECT_MANAGER
+         
+
+        }
+        else if (des==='supervisor')
+        {
+            dbLocation=collection.IIOT_SUPERVISOR
+
+        }
+        else{
+            console.log("ERROR IN THE FUNCTION TO ADD THE DEVICE IN IIOT [ CHECK THE FUNCTION PARAMETERS PASSED ]");
+        }
+        return new Promise(async(resolve,reject)=>{
+      
+           
+                await db.get().collection(dbLocation).findOne({_id:objectId(id)}).then((response)=>{
+                    if(select==='dashboard')
+                    {
+                      
+                        resolve(response.addedToDashboard)
+                    }
+                    else if(select==='device')
+                    {
+                        resolve(response.chartIds.map(({id}) => id))
+                    }
+                    else
+                    {
+                        console.log("ERROR PASSED IN SELECT PARAMETER !!!!! ");
+                    }
+                     resolve(response.chartIds.map(({id}) => id))
+                 })
+             })
+    
+
+    },
+   
+
+    removeFromHome:(id,chartId,des)=>{
+        let dbLocation
+        let deleteQuerry
+        if(des==='businessOwner')
+        {
+            dbLocation=collection.IIOT_BUSINESS_OWNER
+          
+        
+        }
+        else if (des==='projectManager')
+        {
+            dbLocation=collection.IIOT_PROJECT_MANAGER
+         
+
+        }
+        else if (des==='supervisor')
+        {
+            dbLocation=collection.IIOT_SUPERVISOR
+
+        }
+        else{
+            console.log("ERROR IN THE FUNCTION TO ADD THE DEVICE IN IIOT [ CHECK THE FUNCTION PARAMETERS PASSED ]");
+        }
+        return new Promise(async(resolve,reject)=>{
+       deleteQuerry={
+        $pull:{'addedToDashboard':{id:chartId}}
+    }
+           
+                await db.get().collection(dbLocation).updateOne({_id:objectId(id)},deleteQuerry).then((res)=>{
+                    resolve({status:true})
+                })
+             })
+            },
+    
+
+
     storeReport:(file)=>{
         return new Promise(async(resolve,reject)=>{
        
@@ -796,6 +1358,7 @@ module.exports={
           
             
         })
+
     }
 
 }
