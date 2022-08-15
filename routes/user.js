@@ -1004,26 +1004,43 @@ router.get("/up", (req, res) => {
 router.post("/get-devices", (req, res) => {
   console.log(req.query.designation);
   console.log(req.query.userid);
-  res.json({ids:['aaa','bbb','ccc']})
+  iiotUserHelpers.getDevices(req.query.userid,req.query.designation).then((data)=>{
+    console.log(data);
+    res.json(data)
+  })
+  // res.json({ids:['aaa','bbb','ccc'],
+  // name:['aaa','bbb','ccc']})
 });
 router.post("/get-sensors", (req, res) => {
   console.log(req.query.designation);
   console.log(req.query.userid);
   console.log(req.query.deviceid);
-  if(req.query.deviceid==='aaa'|| 'bbb' || 'ccc')
-  {
-    res.json({ids:['ccccc','ddddddddddd','xxefsfdfdfdf']})
-  }
-
-});
+  iiotUserHelpers.getSensors("7544ERSoD8Ci").then((data)=>{
+    console.log(data);
+    res.json(data)
+  })
+})
+ 
 // reports from above apis
 router.post("/submit-alert", (req, res) => {
-  console.log(req.query.designation);
-  console.log(req.query.userid);
-  console.log(req.query.deviceid);
-  console.log(req.query.sensor);
+console.log(req.body);
   res.json({status:true})
 });
+router.get("/submit-report", (req, res) => {
+  console.log(req.query);
+  res.download('./routes/vv.pdf','',(err)=>{
+    if(err)
+    {
+
+      console.log(err);
+    }
+    else{
+      console.log("no error");
+    }
+
+  })
+  });
+  
 
 
 

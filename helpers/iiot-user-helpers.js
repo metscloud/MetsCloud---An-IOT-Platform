@@ -16,6 +16,8 @@ const fs = require("fs-extra");
  
 const hbs = require("handlebars");
 const { password } = require('keygenerator/lib/keygen')
+const { resolve } = require('path')
+const async = require('hbs/lib/async')
 ////MAke sure to uncomment all data
 function idSearcher (array,id){
     console.log("______________________   FROM ID SEARCH     ______________________ ");
@@ -1131,7 +1133,267 @@ module.exports={
   
         })
     
+    },  
+    
+    getDevices:(id,des)=>
+    {
+        return new Promise(async(resolve,reject)=>{
+        let dbLocation
+        let ids=[]
+        let name=[]
+        if(des==='businessOwner')
+        {
+            dbLocation=collection.IIOT_BUSINESS_OWNER
+            //from bo //su
+            //po //su
+            //su
+            
+               await db.get().collection(dbLocation).findOne({ _id:objectId(id)}).then(async(data)=>
+               {
+                
+                for (let i = 0; i < data.devices.length; i++)
+                 {
+                  
+                  
+                   ids.push(data.devices[i].primary_key)
+                   name.push(data.devices[i].deviceNames)
+
+                    
+                }
+           
+                // let obj={
+                //     ids:ids,
+                //     name:name
+                // }
+                //   console.log(obj);
+
+                // checking for SV from BO
+
+                if(data.supervisor.length!=0)
+                {
+                    let userIdOfSupervisors=[]
+           
+                    for (let i = 0; i < data.supervisor.length; i++)
+                     {
+                   
+                        userIdOfSupervisors.push(data.supervisor[i].userId)
+                    
+                  
+                    }
+                    console.log(userIdOfSupervisors);
+                    for (let j = 0; j < userIdOfSupervisors.length; j++) 
+                    {
+                         await db.get().collection(collection.IIOT_SUPERVISOR).findOne({ _id:objectId(userIdOfSupervisors[j])}).then((data)=>{
+              
+                            if(data.devices.length!=0)
+                            {
+                                
+                                ids.push(data.devices[j].primary_key)
+                                name.push(data.devices[j].deviceNames)
+                         
+                            }
+
+                        })
+                        
+                        
+                    }
+                    console.log(ids);
+
+
+                }
+                 // checking for PM from BO
+                 if(data.projectManager.length!=0)
+                {
+                    let userIdOfProjectManager=[]
+                    let supervisorsUnderProjectManagers=[]
+
+                    for (let i = 0; i < data.projectManager.length; i++)
+                     {
+            
+                        userIdOfProjectManager.push(data.projectManager[i].userId)
+                  
+                    }
+        
+                    for (let j = 0; j < userIdOfProjectManager.length; j++) 
+                    {
+                        await db.get().collection(collection.IIOT_PROJECT_MANAGER).findOne({ _id:objectId(userIdOfProjectManager[j])}).then((data)=>{
+                       
+                            if(data.devices.length!=0)
+                            {
+                                ids.push(data.devices[j].primary_key)
+                                name.push(data.devices[j].deviceNames)
+                            }
+                    
+
+                        })
+                        
+                    }
+                   for (let v = 0; v < userIdOfProjectManager.length; v++) {
+                    await   db.get().collection(collection.IIOT_PROJECT_MANAGER).findOne({ _id:objectId(userIdOfProjectManager[v])}).then((data)=>{
+            
+                        if(data.devices.length!=0)
+                        {
+                            ids.push(data.devices[v].primary_key)
+                            name.push(data.devices[v].deviceNames)
+                        }
+                        if(data.supervisor.length!=0)
+                        {
+                            for (let k = 0; k < data.supervisor.length; k++) 
+                            {
+                                
+                                    supervisorsUnderProjectManagers.push(data.supervisor[k].userId)
+                                
+                                
+                            }
+                        }
+                    
+
+                    })
+                    
+                   }
+                    // devices of supervisors under Pm
+                    for (let z = 0; z < supervisorsUnderProjectManagers.length; z++) 
+                    {
+                        await db.get().collection(collection.IIOT_SUPERVISOR).findOne({ _id:objectId(supervisorsUnderProjectManagers[z])}).then((data)=>{
+                   
+                            if(data.devices.length!=0)
+                            {
+                                ids.push(data.devices[z].primary_key)
+                                name.push(data.devices[z].deviceNames)
+                            }
+
+                        })
+                        
+                    }
+
+
+                }
+
+
+
+               })
+               resolve({ids:ids,name:name})
+
+       
+           
+                 
+
+
+        }
+        else if (des==='projectManager')
+        {
+            dbLocation=collection.IIOT_PROJECT_MANAGER
+            let supervisorsUnderProjectManagers=[]
+            await db.get().collection(dbLocation).findOne({ _id:objectId(id)}).then((data)=>
+               {
+
+                for (let i = 0; i < data.devices.length; i++)
+                 {
+
+                  
+                   ids.push(data.devices[i].primary_key)
+                   name.push(data.devices[i].deviceNames)
+
+                    
+                }
+            })
+            
+            await db.get().collection(dbLocation).then(async(data)=>{
+                      // checking for PM from BO
+              
+                         if(data.supervisor.length!=0)
+                         {
+                             for (let k = 0; k < data.supervisor.length; k++) 
+                             {
+                                 
+                                     supervisorsUnderProjectManagers.push(data.supervisor[k].userId)
+                                 
+                                 
+                             }
+                         }
+                     
+ 
+                   
+                     // devices of supervisors under Pm
+                     for (let z = 0; z < supervisorsUnderProjectManagers.length; z++) 
+                     {
+                        await db.get().collection(collection.IIOT_SUPERVISOR).findOne({ _id:objectId(supervisorsUnderProjectManagers[z])}).then((data)=>{
+          
+                             if(data.devices.length!=0)
+                             {
+                                 ids.push(data.devices[z].primary_key)
+                                 name.push(data.devices[z].deviceNames)
+                             }
+ 
+                         })
+                         
+                     }
+ 
+ 
+                 
+                })
+          
+            
+                resolve({ids:ids,name:name})
+
+        }
+        else if (des==='supervisor')
+        {
+            dbLocation=collection.IIOT_SUPERVISOR
+            await db.get().collection(dbLocation).findOne({ _id:objectId(id)}).then((data)=>
+            {
+
+             for (let i = 0; i < data.devices.length; i++)
+              {
+     
+               
+                ids.push(data.devices[i].primary_key)
+                name.push(data.devices[i].deviceNames)
+
+                 
+             }
+         })
+         resolve({ids:ids,name:name})
+         
+
+        }
+        else{
+            console.log("ERROR IN THE FUNCTION TO ADD THE DEVICE IN IIOT [ CHECK THE FUNCTION PARAMETERS PASSED ]");
+        }
+        
+    })
+
     },
+
+    getSensors:(id)=>{
+        let ids=[]
+        let name=[]
+        return new Promise(async(resolve,reject)=>{
+         console.log("IDDD");
+          console.log(id);
+           await db.get().collection(collection.CHART_DATA_IIOT).findOne({ deviceId:id}).then((data)=>{
+
+        
+             console.log(data.iiotData);
+             for (let i = 0; i < data.iiotData.length; i++) 
+             {
+                  ids.push(data.iiotData[i].Id)
+                  name.push(data.iiotData[i].nickname)
+                  
+             }
+             resolve({ids,name})
+
+             
+        })
+        })
+
+
+    },
+
+
+
+
+
     chartData:(id,chartId)=>{
         return new Promise(async(resolve,reject)=>{
         let dbLocation=collection.CHART_DATA_IIOT
@@ -1140,6 +1402,8 @@ module.exports={
     //    console.log(chartId);
        console.log("0000000000");
             await db.get().collection(dbLocation).findOne({userID:id}).then((response)=>{
+                if(response)
+                {
                     console.log(response.iiotData);
                     console.log(chartId);
                     let pos= idSearcherLoadSharedChart(response.iiotData,chartId)
@@ -1149,6 +1413,10 @@ module.exports={
               
 
                  resolve(response.iiotData[pos])
+                }else{
+                    console.log("No data ");
+                }
+                  
              })
          })
 
