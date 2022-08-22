@@ -164,8 +164,8 @@ function userCreator(socketIds,client){
 //production
 app.use(express.static(path.join(__dirname, 'build')));
 
-app.get('/:3000', function (req, res) {
-  app.use('/:3000', userRouter);
+app.get('/', function (req, res) {
+  app.use('/', userRouter);
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
