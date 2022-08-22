@@ -162,20 +162,20 @@ function userCreator(socketIds,client){
 // });
 
 //production
-// app.use(express.static(path.join(__dirname, 'build')));
-
-// app.get('/', function (req, res) {
-//   app.use('/', userRouter);
-//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
-
-//dev
-app.use(express.static(path.join(__dirname, 'testbuild')));
+app.use(express.static(path.join(__dirname, 'build')));
 
 app.get('/', function (req, res) {
   app.use('/', userRouter);
-  res.sendFile(path.join(__dirname, 'testbuild', 'index.html'));
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
+
+//dev
+// app.use(express.static(path.join(__dirname, 'testbuild')));
+
+// app.get('/', function (req, res) {
+//   app.use('/', userRouter);
+//   res.sendFile(path.join(__dirname, 'testbuild', 'index.html'));
+// });
 
 
 
