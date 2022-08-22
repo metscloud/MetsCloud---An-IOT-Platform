@@ -1445,10 +1445,13 @@ module.exports={
         }
         return new Promise(async(resolve,reject)=>{
       
+            let obj={
+                id:chartId
+            }
        
             await db.get().collection(dbLocation).updateOne({ _id:objectId(userId)},
             {
-                $push: { addedToDashboard: chartId }
+                $push: { addedToDashboard: obj }
             }
            ).then((res)=>{
                  resolve(res)
@@ -1485,7 +1488,7 @@ module.exports={
                     if(select==='dashboard')
                     {
                       
-                        resolve(response.addedToDashboard)
+                        resolve(response.addedToDashboard.map(({id}) => id))
                     }
                     else if(select==='device')
                     {
@@ -1504,6 +1507,10 @@ module.exports={
    
 
     removeFromHome:(id,chartId,des)=>{
+        console.log(id);
+        console.log(des);
+        console.log(',,,,,');
+        console.log(chartId);
         let dbLocation
         let deleteQuerry
         if(des==='businessOwner')
@@ -1527,6 +1534,7 @@ module.exports={
             console.log("ERROR IN THE FUNCTION TO ADD THE DEVICE IN IIOT [ CHECK THE FUNCTION PARAMETERS PASSED ]");
         }
         return new Promise(async(resolve,reject)=>{
+        
        deleteQuerry={
         $pull:{'addedToDashboard':{id:chartId}}
     }

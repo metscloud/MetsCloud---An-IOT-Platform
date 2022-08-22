@@ -934,7 +934,7 @@ router.post('/iiot-add-to-home',(req,res)=>{
 
 router.post('/iiot-remove-from-home',(req,res)=>{
   console.log(req.body);
-  console.log(req.query.userid);
+  console.log(req.query.id);
   iiotUserHelpers.removeFromHome(req.query.userid,req.query.id,req.query.designation).then((r)=>{
       res.json({status:true})
     })

@@ -26,6 +26,7 @@ socketApi.io = io;
 
 
 
+
 const cors=require('cors')
 // const socket = require("socket.io");
 // const io = socket(3000,{ 
@@ -159,6 +160,13 @@ function userCreator(socketIds,client){
 //   req.io = io;
 //   next();
 // });
+app.use(express.static(path.join(__dirname, 'build')));
+
+app.get('/', function (req, res) {
+  app.use('/', userRouter);
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
 app.use('/', userRouter);
 app.use('/admin', adminRouter)
 app.use('/blog', blogRouter);
