@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "./static/css/main.31690426.css",
+    "main.js": "./static/js/main.af789d44.js",
+    "static/media/background-boady-admin.png": "./static/media/background-boady-admin.9a5703c114bec6efe39b.png",
+    "static/media/signUpImage.png": "./static/media/signUpImage.ce32c5768505cac270ef.png",
+    "static/media/signInImage.png": "./static/media/signInImage.54090d1d6f00462e1f4b.png",
+    "static/media/billing-background-card.png": "./static/media/billing-background-card.12071e802769d6f46e3e.png",
+    "static/media/avatar9.png": "./static/media/avatar9.2db98189f85998b61c6b.png",
+    "static/media/cardimgfree.png": "./static/media/cardimgfree.4372708864223c779858.png",
+    "static/media/avatar7.png": "./static/media/avatar7.00e8f4f007f327b73e71.png",
+    "static/media/avatar10.png": "./static/media/avatar10.1683e1c0cac6f333de9d.png",
+    "static/media/bgProfile.png": "./static/media/bgProfile.d734b546dfd26a184fcb.png",
+    "static/media/avatar8.png": "./static/media/avatar8.9719f14554a45416b270.png",
+    "static/media/SidebarHelpImage.png": "./static/media/SidebarHelpImage.40ef5912be5ef8097186.png",
+    "static/media/ProjectImage3.png": "./static/media/ProjectImage3.612b1c42b661baf74aea.png",
+    "static/media/ProjectImage1.png": "./static/media/ProjectImage1.bed72a005437df70012f.png",
+    "static/media/ProjectImage2.png": "./static/media/ProjectImage2.e33d8e1649b42af9731b.png",
+    "index.html": "./index.html",
+    "main.31690426.css.map": "./static/css/main.31690426.css.map",
+    "main.af789d44.js.map": "./static/js/main.af789d44.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.31690426.css",
+    "static/js/main.af789d44.js"
+  ]
+}

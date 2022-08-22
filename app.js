@@ -160,12 +160,24 @@ function userCreator(socketIds,client){
 //   req.io = io;
 //   next();
 // });
-app.use(express.static(path.join(__dirname, 'build')));
+
+//production
+// app.use(express.static(path.join(__dirname, 'build')));
+
+// app.get('/', function (req, res) {
+//   app.use('/', userRouter);
+//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// });
+
+//dev
+app.use(express.static(path.join(__dirname, 'testbuild')));
 
 app.get('/', function (req, res) {
   app.use('/', userRouter);
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  res.sendFile(path.join(__dirname, 'testbuild', 'index.html'));
 });
+
+
 
 app.use('/', userRouter);
 app.use('/admin', adminRouter)
