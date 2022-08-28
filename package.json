@@ -27,6 +27,7 @@
     "puppeteer": "^15.3.0",
     "random": "^3.0.6",
     "razorpay": "^2.0.7",
-    "socket.io": "^4.4.1"
+    "socket.io": "^4.4.1",
+    "xlsx": "^0.18.5"
   }
 }

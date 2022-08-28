@@ -8,7 +8,7 @@ module.exports={
     SUBSCRIBE:'subscribe',
     PRODUCT_COLLECTION:'product',
     USER_COLLECTION:'user',
-    CART_COLLECTION:'cart',
+    // CART_COLLECTION:'cart',
     ADMIN_COLLECTION:'admin',
     ORDER_COLLECTION:'orders',
     UART_SUBSCRIPTIONS:'uartSubscribtions',

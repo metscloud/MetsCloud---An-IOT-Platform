@@ -11,8 +11,9 @@ var mqttKeyStore=require('../helpers/mqttKeysStore')
 const fileUpload = require('express-fileupload')
 const path = require("path");
 const puppeteer = require("puppeteer");
- 
+const XLSX = require('xlsx')
 const fs = require("fs-extra");
+
  
 const hbs = require("handlebars");
 const { password } = require('keygenerator/lib/keygen')
@@ -957,6 +958,7 @@ module.exports={
   
     //add data as a parameter ...for testing it  left as this
     addSensor:(userId,deviceId,to,max,chartDataStore,d)=>{
+        let iddd
         data={
             parameter:d.type,
             nickname:d.nickname
@@ -1016,11 +1018,15 @@ module.exports={
                
      
      
-                let id=keygen.password();
+                let id=await keygen.password();
+                iddd=id
                 let obj={
                     Id:id,
                     parameter:data.parameter,
                     nickname:data.nickname,
+                    min:[],
+                    max:[],
+                    alert:false,
                     values:[]
                 }
      
@@ -1031,7 +1037,7 @@ module.exports={
                ).then((response)=>{
                 console.log(obj.Id+"))))))))))))O");
                 let id={
-                    id:obj.Id,
+                    id: iddd,
                     deviceId:deviceId
                 }
                 db.get().collection(dbLocation).updateOne({ _id:objectId(userId)},
@@ -1076,6 +1082,7 @@ module.exports={
          else
             {
             let id=keygen.password();
+            iddd=id
             let obj=
             {
                 userID:userId,
@@ -1112,7 +1119,7 @@ module.exports={
              .then((response)=>{
               
                 let i={
-                    id:obj.Id,
+                    id:iddd,
                     deviceId:deviceId
                 }
                 db.get().collection(dbLocation).updateOne({ _id:objectId(userId)},
@@ -1558,40 +1565,169 @@ module.exports={
         
 
     },
-    createPdf:()=>{
-        return new Promise((resolve, reject) => {
+   
+    
+     createXls : (name,id,des,chartId) => {
+        return new Promise(async(resolve, reject) => {
+            let dbLocation=collection.CHART_DATA_IIOT
+            let dataToXls
+            if(des==='businessOwner')
+            {
+                dbLocationUser=collection.IIOT_BUSINESS_OWNER
+              
+            
+            }
+            else if (des==='projectManager')
+            {
+                dbLocationUser=collection.IIOT_PROJECT_MANAGER
+             
+    
+            }
+            else if (des==='supervisor')
+            {
+                dbLocationUser=collection.IIOT_SUPERVISOR
+    
+            }
+            else{
+                console.log("ERROR IN THE FUNCTION TO ADD THE DEVICE IN IIOT [ CHECK THE FUNCTION PARAMETERS PASSED ]");
+            }
+            await db.get().collection(dbLocation).findOne({userID:id}).then(async(response)=>{
+                if(response)
+                {
+                    console.log(response.iiotData);
+                    console.log(chartId);
+                    let pos= idSearcherLoadSharedChart(response.iiotData,chartId)
+                    // console.log("_____#_#_#_#_##");
+                    console.log("################");
+                    console.log("################");
+                    console.log("################");
+                    console.log("################");
+                     console.log(response.iiotData[pos]);
+                    dataToXls=response.iiotData[pos].values
+               
+    
+                }else{
+                    console.log("No data ");
+                }
+            })
+          console.log(dataToXls);
+     
+        const students = dataToXls
+    
+        const workSheet = XLSX.utils.json_to_sheet(students);
+        const workBook = XLSX.utils.book_new();
+    
+        XLSX.utils.book_append_sheet(workBook, workSheet, "students")
+        // Generate buffer
+        XLSX.write(workBook, { bookType: 'xlsx', type: "buffer" })
+    
+        // Binary string
+        XLSX.write(workBook, { bookType: "xlsx", type: "binary" })
+       
+        let path='./Cache/xls/'+name+'.xlsx'
+        console.log(path);
+        XLSX.writeFile(workBook, path,{
+            bookType: 'xlsx',
+            type: 'file'
+    })
+    resolve({status:true})
+})
+    
+    },
+    createPdf:(name,id,des,chartId)=>{
+        return new Promise(async(resolve, reject) => {
+            let dataToPdf
+            let dbLocationUser
+            let userName
+            let designation
+            let organization
+            let device
+            let sensor
+            let time
+            if(des==='businessOwner')
+            {
+                dbLocationUser=collection.IIOT_BUSINESS_OWNER
+              
+            
+            }
+            else if (des==='projectManager')
+            {
+                dbLocationUser=collection.IIOT_PROJECT_MANAGER
+             
+    
+            }
+            else if (des==='supervisor')
+            {
+                dbLocationUser=collection.IIOT_SUPERVISOR
+    
+            }
+            else{
+                console.log("ERROR IN THE FUNCTION TO ADD THE DEVICE IN IIOT [ CHECK THE FUNCTION PARAMETERS PASSED ]");
+            }
 //PENDING
 // data retriveal,template style
 
+    let dbLocation=collection.CHART_DATA_IIOT
+//     console.log("0000000000");
+//    console.log(id);
+//    console.log(chartId);
+   console.log("0000000000");
+         let deviceIdFromdbLocation
+ 
+        await db.get().collection(dbLocation).findOne({userID:id}).then(async(response)=>{
+            if(response)
+            {
+                console.log(response.iiotData);
+                console.log(chartId);
+                let pos= idSearcherLoadSharedChart(response.iiotData,chartId)
+                // console.log("_____#_#_#_#_##");
+                console.log("################");
+                console.log("################");
+                console.log("################");
+                console.log("################");
+                 console.log(response.iiotData[pos]);
+                dataToPdf=response.iiotData[pos].values
+                sensor=response.iiotData[pos].nickname
+                deviceIdFromdbLocation=response.deviceId
+
+            }else{
+                console.log("No data ");
+            }
+            await db.get().collection(dbLocationUser).findOne({_id:objectId(id)}).then(async(res)=>{
+                console.log(res);
+                userName=res.userName
+                designation=des
+                organization=res.organization
+                let pos=idSearcher(res.devices,deviceIdFromdbLocation)
+                device=res.devices[pos].deviceNames
+
+
+            })
+              
+         })
+           let date = new Date();
+            
+     
             const data = {
-                "users": [
-                    {
-                      "name": "KANE WILLIAMSON",
-                      "age": 32,
-                      "country": "NEW ZEALAND"
-                    },
-                    {
-                      "name": "ROSS TAYLOR",
-                      "age": 38,
-                      "country": "NEW ZEALAND"
-                    },
-                    {
-                      "name": "TOM LATHAM",
-                      "age": 31,
-                      "country": "NEW ZEALAND"
-                    },
-                    {
-                      "name": "TIM SOUTHEE",
-                      "age": 33,
-                      "country": "NEW ZEALAND"
-                    }
-                  ]
+          //name,des,generated time,orginization,device,sensor
+                    name:userName,
+                    des:designation,
+                    org:organization,
+                    devName:device,
+                    senName:sensor,
+                    date,
+                    
+                     dataToPdf
+                    
+               
 
             }
+            
+            console.log(data);
             const compile = async function (templateName, data) {
                 const filePath = path.join(process.cwd(), 'templates', `${templateName}.hbs`);
                 const html = await fs.readFile(filePath, 'utf8');
-                console.log(html)
+              
                 return hbs.compile(html)(data);
             };
             
@@ -1604,14 +1740,15 @@ module.exports={
             
                     const page = await browser.newPage();
             
-                    console.log(data)
+               
             
                     const content = await compile('index', data);
             
-                    console.log(content)
+
             
                     await page.setContent(content);
-                        a='./routes/vv.pdf'
+                    // await page.addStyleTag({ path: path.join(__dirname, '/public/css/style.css') });
+                        a=`./Cache/pdf/${name}.pdf`
                     pdf= await page.pdf({
                         path: a,
                         format: 'A4',
