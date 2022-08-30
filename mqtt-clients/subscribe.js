@@ -138,7 +138,7 @@ function dataAdderOfDevice(message,userId,dbLocation)
     console.log(typeof arry);
     for(let i=0;i<=arry.length-1;i++)
     {
-      if(arry[i]===00)
+      if(arry[i]===-999)
       {
      console.log("NO VALUE");
       }else{
@@ -159,18 +159,49 @@ function dataAdderOfDevice(message,userId,dbLocation)
           console.log("++++++++++++{}{}{{}{}{}{}{}}{}{}{}{}");
           console.log(idOfEachChart[i]);
           console.log(data.iiotData[i].min);
-          for (let index = 0; index < data.iiotData[i].min.length; index++) {
+          for (let index = 0; index < data.iiotData[i].min.length; index++)
+           {
+            let alert=false
             console.log(data.iiotData[i].min[index]);
             console.log(obj.value);
-            if(obj.value<=data.iiotData[i].min[index])
+            if(alert===false)
+            {
+              if(obj.value<=data.iiotData[i].min[index].value)
             {
               console.log("ALERT DANGER  DANGER"+index);
               // alertEmail
-              console.log(data.alertEmail);
-              notification.sentEmail(data.alertEmail,"ALERT ","LOW VALUE>>>>")
-              notification.sentSms("Low Value >>>>>","987785534578")
-              notification.call("Low Value >>>>>","987785534578")
+              console.log(data.iiotData[i].min[index].email);
+              notification.sentEmail(data.iiotData[i].min[index].email,"ALERT ","LOW VALUE>>>>")
+              notification.sentSms("Low Value >>>>>",data.iiotData[i].min[index].sms)
+              notification.call("Low Value >>>>>",data.iiotData[i].min[index].ph)
+              alert=true
             }
+
+            }
+            else
+            {
+              console.log("ALERT ALREADY SENTED");
+            }
+            //===========================================
+            if(alert===false)
+            {
+              if(obj.value>=data.iiotData[i].max[index].value)
+            {
+              console.log("ALERT DANGER  DANGER"+index);
+              // alertEmail
+              console.log(data.iiotData[i].min[index].email);
+              notification.sentEmail(data.iiotData[i].min[index].email,"ALERT ","High VALUE>>>>")
+              notification.sentSms("High Value >>>>>",data.iiotData[i].min[index].sms)
+              notification.call("High Value >>>>>",data.iiotData[i].min[index].ph)
+              alert=true
+            }
+
+            }
+            else
+            {
+              console.log("ALERT ALREADY SENTED");
+            }
+            
           }
         })
      

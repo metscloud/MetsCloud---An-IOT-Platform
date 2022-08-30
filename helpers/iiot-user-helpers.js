@@ -60,7 +60,7 @@ module.exports={
             let accessControlID
             let aa='123'
             let pass=await bcrypt.hash(aa,10)
-            let l='testbo@gmail.com'
+            let l='t@g.com'
          
 
         
@@ -1772,7 +1772,63 @@ module.exports={
             
         })
 
-    }
+    },
+
+settingALERT:(info,data)=>{
+    return new Promise(async(resolve,reject)=>{
+        console.log(info);
+        let obj={
+            value:parseInt(data.value,10),
+            email:data.email,
+            sms:parseInt(data.sms,10),
+            ph:parseInt(data.phno,10)
+
+        }
+        console.log(obj);
+        let querry
+        if(data.aboveOrBelow==='above')
+        {
+            querry={
+                "iiotData.$.max":obj
+            }
+            console.log(querry);
+
+        }
+        else{
+            querry={
+                "iiotData.$.min":obj
+            }
+
+        }
+  await db.get().collection(collection.CHART_DATA_IIOT).updateOne({ 'iiotData.Id':data.sensor},
+            {
+                $push: querry
+            }
+           ).then((response)=>{
+      console.log(response);
+             resolve({status:true})
+         })
+     })
+
+},
+deleteSensor:(data)=>{
+    return new Promise(async(resolve,reject)=>{
+     
+        let deleteQuerry={
+            $pull:{'iiotData':{Id:data.sensorid}}
+        }
+        await db.get().collection(collection.CHART_DATA_IIOT).updateOne({ 'iiotData.Id':data.sensorid}, deleteQuerry
+       ).then((response)=>{
+         console.log(response);
+         resolve({status:true})
+     })
+ })
+      
+}
+
+
+
 
 }
+
 

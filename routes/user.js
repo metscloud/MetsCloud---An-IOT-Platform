@@ -583,9 +583,14 @@ router.post("/create-token", (req, res) => {
     req.body.email,
     req.query.userid,
     req.body.designation
-  ).then((res)=>{
-     notificationPusher.sentEmail(req.body.email,"Invite to Join Mets Cloud",`Public ID :${res.publicId}  TokenID : ${res.tokenID}`)
+  ).then((r)=>{
+     notificationPusher.sentEmail(req.body.email,"Invite to Join Mets Cloud",`Public ID :${r.publicId}  TokenID : ${r.tokenID}`)
+     res.json({status:'success'})
+  }).catch(()=>{
+    res.json({status:'error'})
+
   })
+
 });
 //////////
 router.post("/iiot-signin", async (req, res) => {
@@ -729,6 +734,7 @@ router.post("/iiot-add-sensor", (req, res) => {
     collections.CHART_DATA_IIOT,
     req.body
   );
+  res.json({status:'success'})
 });
 router.get("/iiot-share-chart", (req, res) => {
   iiotUserHelpers.shareChart(
@@ -855,10 +861,17 @@ router.post("/delete-token", (req, res) => {
   res.render("uploadTest");
 });
 router.post("/delete-devices", (req, res) => {
+  console.log("))))))))");
+  console.log(req.query);
      res.json({status:true})
 });
 router.post("/delete-sensor", (req, res) => {
-  res.json({status:true})
+  console.log(req.query);
+  iiotUserHelpers.deleteSensor(req.query).then((r)=>{
+    res.json({status:true})
+  })
+
+
 });
 router.post("/view-sensor", (req, res) => {
   res.render("uploadTest");
@@ -953,36 +966,19 @@ router.post('/iiot-load-alerts',(req,res)=>{
 router.get('/iiot-report-xls',(req,res)=>{
 
 
-  console.log(req.query.chartId);
+  console.log(req.query);
   console.log(req.query.designation);
   console.log(req.query.userid);
   let date = Date.now();
   let name = date.toString();
-  iiotUserHelpers.createXls(name,req.query.userid,'businessOwner',req.query.chartId).then(async(data) => {
+  iiotUserHelpers.createXls(name,req.query.userid,req.query.designation,req.query.chartId).then(async(data) => {
   
 
 
   //   let file = { name: "report", file: binary(data) };
   //  await  iiotUserHelpers.storeReport(file);
-  });
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
+ 
+
   console.log(req.query.designation);
   console.log(req.query.userid);
   console.log(req.query.chartId);
@@ -1001,59 +997,25 @@ router.get('/iiot-report-xls',(req,res)=>{
   })
   // res.attachment('./routes/vv.pdf'').send()
   
-
+});
 
 })
  
 router.get('/iiot-report-pdf',async (req,res)=>{
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
+
   console.log(req.query.designation);
   let date = Date.now();
   let name = date.toString();
   console.log(name);
   // pass date  as the name then function creates the pdf in the name of that and stores it then download using the name
- await  iiotUserHelpers.createPdf(name,req.query.userid,'businessOwner',req.query.chartId).then(async(data) => {
+ await  iiotUserHelpers.createPdf(name,req.query.userid,req.query.designation,req.query.chartId).then(async(data) => {
   
 
 
     let file = { name: "report", file: binary(data) };
    await  iiotUserHelpers.storeReport(file);
   });
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
-  console.log("##########")
+
   console.log(req.query.designation);
   console.log(req.query.userid);
   console.log(req.query.chartId);
@@ -1070,7 +1032,7 @@ router.get('/iiot-report-pdf',async (req,res)=>{
     }
 
   })
-  // res.attachment('./routes/vv.pdf'').send()
+
   
 
 
@@ -1112,11 +1074,80 @@ router.post("/get-sensors", (req, res) => {
 // reports from above apis
 router.post("/submit-alert", (req, res) => {
 console.log(req.body);
-  res.json({status:true})
+console.log(req.query);
+iiotUserHelpers.settingALERT(req.query,req.body).then((r)=>{
+  if(r.status===true)
+  {
+    res.json({status:'success'})
+
+  }
+  else
+  {
+    res.json({status:'error'})
+
+  }
+})
+
 });
-router.get("/submit-report", (req, res) => {
+router.get("/submit-report", async(req, res) => {
   console.log(req.query);
-  res.download('./routes/vv.pdf','',(err)=>{
+  if(req.query.type==='pdf')
+  {
+    console.log(req.query.designation);
+    let date = Date.now();
+    let name = date.toString();
+    console.log(name);
+    // pass date  as the name then function creates the pdf in the name of that and stores it then download using the name
+   await  iiotUserHelpers.createPdf(name,req.query.userid,req.query.designation,req.query.sensor).then(async(data) => {
+    
+  
+  
+      let file = { name: "report", file: binary(data) };
+     await  iiotUserHelpers.storeReport(file);
+    });
+  
+    console.log(req.query.designation);
+    console.log(req.query.userid);
+    console.log(req.query.chartId);
+    let path='./Cache/pdf/'+name.toString()+'.pdf'
+    console.log(path);
+    res.download(path,'',(err)=>{
+      if(err)
+      {
+  
+        console.log(err);
+      }
+      else{
+        console.log("no error");
+      }
+  
+    })
+  
+
+
+
+  }
+  else{
+
+  console.log(req.query);
+  console.log(req.query.designation);
+  console.log(req.query.userid);
+  let date = Date.now();
+  let name = date.toString();
+  iiotUserHelpers.createXls(name,req.query.userid,req.query.designation,req.query.sensor).then(async(data) => {
+  
+
+
+  //   let file = { name: "report", file: binary(data) };
+  //  await  iiotUserHelpers.storeReport(file);
+ 
+
+  console.log(req.query.designation);
+  console.log(req.query.userid);
+  console.log(req.query.chartId);
+  let path='./Cache/xls/'+name.toString()+'.xlsx'
+  console.log(path);
+  res.download(path,'',(err)=>{
     if(err)
     {
 
@@ -1127,6 +1158,12 @@ router.get("/submit-report", (req, res) => {
     }
 
   })
+  // res.attachment('./routes/vv.pdf'').send()
+  
+});
+
+  }
+  
   });
   
 
