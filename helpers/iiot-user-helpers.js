@@ -1305,7 +1305,7 @@ module.exports={
                 }
             })
             
-            await db.get().collection(dbLocation).then(async(data)=>{
+            await db.get().collection(dbLocation).findOne({ _id:objectId(id)}).then(async(data)=>{
                       // checking for PM from BO
               
                          if(data.supervisor.length!=0)
