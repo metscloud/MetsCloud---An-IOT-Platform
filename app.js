@@ -66,8 +66,8 @@ db.connect((err)=>{
   else console.log('connected to database (PORT : 27017)');
 })
 
-broker.startBroker()
-subscribe.lifeTimeSubscriber()
+// broker.startBroker()
+// subscribe.lifeTimeSubscriber()
 
 //Sockets..........................................
 
