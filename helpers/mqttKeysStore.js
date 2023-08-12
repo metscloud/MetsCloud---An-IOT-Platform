@@ -60,7 +60,9 @@ addKeysToCollection:(keys)=>{
 },
 getAllKeysOfMetsCloud:()=>{
     return new Promise(async(resolve,reject)=>{
+        console.log("response");
         await db.get().collection(collection.MQTT_KEYS).findOne({name:"MetsCloudKeys"}).then((response)=>{
+         
           resolve(response.subscribeKeys)
         })
     })
